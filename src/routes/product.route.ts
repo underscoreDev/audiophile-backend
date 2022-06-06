@@ -10,7 +10,7 @@ import {
 const productsRouter = Router();
 
 // param middleware
-productsRouter.param("id", (req: Request, res: Response, next: NextFunction, val: string) => {
+productsRouter.param("id", (_req: Request, _res: Response, next: NextFunction, val: string) => {
   console.log(`Product Id is ${val}`);
   next();
 });

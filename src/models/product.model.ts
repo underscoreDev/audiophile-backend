@@ -4,12 +4,24 @@ const productsSchema = new Schema({
   slug: String,
   new: Boolean,
   shortName: String,
-  name: { type: String, required: [true, "A product must have a name"] },
+  name: { type: String, trim: true, required: [true, "A product must have a name"] },
   price: { type: Number, required: [true, "A product must have a price"] },
   image: { type: String, required: [true, "A product must have an Image"] },
-  features: { type: String, required: [true, "A product must have some features"] },
-  description: { type: String, required: [true, "A product must have a description"] },
-
+  features: { type: String, trim: true, required: [true, "A product must have some features"] },
+  description: { type: String, trim: true, required: [true, "A product must have a description"] },
+  gallery: [String],
+  ratingsAverage: {
+    type: Number,
+    default: 4.5,
+  },
+  ratingsQuantity: {
+    type: Number,
+    default: 0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
   category: {
     type: String,
     trim: true,
@@ -30,13 +42,6 @@ const productsSchema = new Schema({
         type: String,
         required: [true, "A product must inform what comes inside of the box."],
       },
-    },
-  ],
-
-  gallery: [
-    {
-      imageUrl: String,
-      images: { type: String, required: [true, "A product must have images"] },
     },
   ],
 });
