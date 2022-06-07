@@ -8,7 +8,11 @@ const productsSchema = new Schema({
   price: { type: Number, required: [true, "A product must have a price"] },
   image: { type: String, required: [true, "A product must have an Image"] },
   features: { type: String, trim: true, required: [true, "A product must have some features"] },
-  description: { type: String, trim: true, required: [true, "A product must have a description"] },
+  description: {
+    type: String,
+    trim: true,
+    required: [true, "A product must have a description"],
+  },
   gallery: [String],
   ratingsAverage: {
     type: Number,
@@ -21,6 +25,7 @@ const productsSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
+    select: false,
   },
   category: {
     type: String,

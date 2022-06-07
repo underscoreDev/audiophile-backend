@@ -16,7 +16,8 @@
     "object-curly-spacing": ["error", "always"],
     "new-cap": ["error", { "capIsNew": false }],
     "indent": ["error", 2, { "FunctionExpression": { "parameters": "first" } }],
-    "implicit-arrow-linebreak": ["error", "below"],
+    // "implicit-arrow-linebreak": ["error", "beside"],
+    // "arrow-body-style": ["error", "as-needed"],
     "comma-dangle": [
       "error",
       {

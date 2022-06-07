@@ -1,13 +1,23 @@
-import { NextFunction, Request, Response } from "express";
 import Product from "../models/product.model";
+import { NextFunction, Request, Response } from "express";
+import { MongooseQueryParser } from "mongoose-query-parser";
 
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
+  const parser = new MongooseQueryParser();
   try {
-    const products = await Product.find();
+    const parsed = parser.parse(req.query);
+    const skip = (+parsed.filter.page - 1) * Number(parsed.limit);
+
+    const products = await Product.find(parsed.filter)
+      .sort(parsed.sort)
+      .select(parsed.select)
+      .skip(skip)
+      .limit(Number(parsed.limit));
+
     res.status(200).json({
       status: "success",
+      results: products.length,
       data: {
-        count: products.length,
         products,
       },
     });
