@@ -2,6 +2,13 @@ import Product from "../models/product.model";
 import { NextFunction, Request, Response } from "express";
 import { MongooseQueryParser } from "mongoose-query-parser";
 
+export const aliasTopTours = (req: Request, res: Response, next: NextFunction) => {
+  req.query.limit = "5";
+  req.query.sort = "-ratingsAverage,price";
+  req.query.select = "name,price,ratingsAverage,features,description";
+  next();
+};
+
 export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
   const parser = new MongooseQueryParser();
   try {
