@@ -1,23 +1,26 @@
-import { Request, Response, Router, NextFunction } from "express";
+import { Router } from "express";
 import {
   createProduct,
-  getAllProducts,
   getOneProduct,
   updateProduct,
   deleteProduct,
-  aliasTopTours,
+  getAllProducts,
+  getProductStats,
 } from "../controllers/product.controller";
+import { catchAsync } from "../middlewares/catchAsyncError.middleware";
+import { aliasTopProducts } from "../middlewares/product.middleware";
 
 const productsRouter = Router();
 
-// param middleware
-productsRouter.param("id", (_req: Request, _res: Response, next: NextFunction, val: string) => {
-  console.log(`Product Id is ${val}`);
-  next();
-});
+productsRouter.route("/product-stats").get(catchAsync(getProductStats));
+productsRouter.route("/").get(catchAsync(getAllProducts)).post(catchAsync(createProduct));
 
-productsRouter.route("/").get(getAllProducts).post(createProduct);
-productsRouter.route("/top-5-tours").get(aliasTopTours).get(getAllProducts);
-productsRouter.route("/:id").get(getOneProduct).patch(updateProduct).delete(deleteProduct);
+productsRouter.route("/top-5-products").get(aliasTopProducts).get(catchAsync(getAllProducts));
+
+productsRouter
+  .route("/:id")
+  .get(catchAsync(getOneProduct))
+  .patch(catchAsync(updateProduct))
+  .delete(catchAsync(deleteProduct));
 
 export default productsRouter;

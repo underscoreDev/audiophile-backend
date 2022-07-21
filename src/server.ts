@@ -5,10 +5,10 @@ const { PORT, HOST, DATABASE_LOCAL } = process.env;
 
 const dbConnect = async () => {
   try {
-    await mongoose.connect(DATABASE_LOCAL !== undefined ? DATABASE_LOCAL : "");
+    await mongoose.connect(DATABASE_LOCAL as string);
     console.log("************DATABASE CONNECTED************");
   } catch (error) {
-    throw error;
+    throw new Error(`Cannot connect to database ${error}`);
   }
 };
 
