@@ -1,6 +1,7 @@
 import Product from "../models/product.model";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { MongooseQueryParser } from "mongoose-query-parser";
+import { AppError } from "../middlewares/handleAppError.middleware";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   const parser = new MongooseQueryParser();
@@ -37,8 +38,11 @@ export const getProductStats = async (_req: Request, res: Response) => {
   return res.status(200).json({ status: "success", data: { stats } });
 };
 
-export const getOneProduct = async (req: Request, res: Response) => {
-  const product = await Product.findById(req.params.id);
+export const getOneProduct = async (req: Request, res: Response, next: NextFunction) => {
+  const product = await Product.findById(req.params.product_id);
+  if (!product) {
+    return next(new AppError("No Product found with that id", 404));
+  }
   return res.status(200).json({ status: "success", data: { product } });
 };
 
@@ -47,15 +51,21 @@ export const createProduct = async (req: Request, res: Response) => {
   return res.status(201).json({ status: "success", data: { product: newProduct } });
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
+  const product = await Product.findByIdAndUpdate(req.params.product_id, req.body, {
     new: true,
     runValidators: true,
   });
+  if (!product) {
+    return next(new AppError("No Product found with that id", 404));
+  }
   return res.status(201).json({ status: "success", data: { product } });
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
-  await Product.findByIdAndDelete(req.params.id);
+export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
+  const product = await Product.findByIdAndDelete(req.params.product_id);
+  if (!product) {
+    return next(new AppError("No Product found with that id", 404));
+  }
   return res.status(204).json({ status: "success", data: null });
 };

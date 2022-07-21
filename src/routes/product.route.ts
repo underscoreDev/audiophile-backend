@@ -18,7 +18,7 @@ productsRouter.route("/").get(catchAsync(getAllProducts)).post(catchAsync(create
 productsRouter.route("/top-5-products").get(aliasTopProducts).get(catchAsync(getAllProducts));
 
 productsRouter
-  .route("/:id")
+  .route("/:product_id")
   .get(catchAsync(getOneProduct))
   .patch(catchAsync(updateProduct))
   .delete(catchAsync(deleteProduct));
