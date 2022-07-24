@@ -20,7 +20,7 @@ export const signUp = async (req: Request, res: Response) => {
   });
 
   // generate jwt token
-  const token = await signJwt(newUser._id);
+  const token = signJwt(newUser._id);
   // send to client
   return res.status(201).json({
     status: "User created Successfully",
@@ -50,7 +50,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     return next(new AppError("Incorrect Password", 401));
   }
 
-  const token = await signJwt(user._id);
+  const token = signJwt(user._id);
 
   // send to client
   return res.status(201).json({
