@@ -11,12 +11,12 @@ export const signUp = async (req: Request, res: Response) => {
 
   // create user
   const newUser = await User.create({
-    firstname,
-    lastname,
     email,
-    password,
-    passwordConfirm,
     photo,
+    password,
+    lastname,
+    firstname,
+    passwordConfirm,
   });
 
   // generate jwt token

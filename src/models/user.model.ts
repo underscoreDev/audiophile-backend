@@ -1,6 +1,6 @@
 /* eslint-disable no-invalid-this */
 /* eslint-disable space-before-function-paren */
-import { Schema, model, Document, SchemaDefinitionProperty } from "mongoose";
+import { Schema, model, SchemaDefinitionProperty, Model } from "mongoose";
 import valid from "validator";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
@@ -9,7 +9,7 @@ config();
 
 const { SALT_ROUNDS } = process.env;
 
-export interface UserProps extends Document {
+export interface UserProps {
   firstname: string;
   lastname: string;
   email: string;
@@ -18,7 +18,13 @@ export interface UserProps extends Document {
   passwordConfirm: string | undefined;
 }
 
-const userSchema = new Schema({
+export interface UserMethods {
+  correctPassword(enteredPassword: string, candidatePassword: string): Promise<boolean>;
+}
+
+type UserModel = Model<UserProps, {}, UserMethods>;
+
+const userSchema = new Schema<UserProps, UserModel, UserMethods>({
   firstname: {
     type: String,
     minlength: 2,
@@ -61,7 +67,7 @@ const userSchema = new Schema({
 
 userSchema.pre("save", async function (next) {
   const user = this as UserProps;
-  if (!user.isModified("password")) {
+  if (!this.isModified("password")) {
     return next();
   }
 
@@ -75,9 +81,9 @@ userSchema.methods.correctPassword = async function (
   enteredPassword: string,
   candidatePassword: string
 ) {
-  return await bcrypt.compare(candidatePassword, enteredPassword);
+  return await bcrypt.compare(enteredPassword, candidatePassword);
 };
 
-const User = model<UserProps>("User", userSchema);
+const User = model<UserProps, UserModel>("User", userSchema);
 
 export default User;
