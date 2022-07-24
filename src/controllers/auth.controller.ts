@@ -40,7 +40,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
   const user = await User.findOne({ email }).select("+password");
 
-  if (!user )) {
+  if (!user) {
     return next(new AppError("Email doesn't exist", 401));
   }
 
