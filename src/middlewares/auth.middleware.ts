@@ -2,10 +2,10 @@
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import { Types } from "mongoose";
-import { Request, Response, NextFunction } from "express";
-import { AppError } from "./handleAppError.middleware";
+import { roles } from "../interface";
 import User from "../models/user.model";
-import { roles } from "../interface/index";
+import { AppError } from "./handleAppError.middleware";
+import { Request, Response, NextFunction } from "express";
 config();
 
 const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;

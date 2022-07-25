@@ -7,10 +7,10 @@ import {
   getAllProducts,
   getProductStats,
 } from "../controllers/product.controller";
-import { catchAsync } from "../middlewares/catchAsyncError.middleware";
-import { aliasTopProducts } from "../middlewares/product.middleware";
-import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { roles } from "../interface";
+import { protect, restrictTo } from "../middlewares/auth.middleware";
+import { aliasTopProducts } from "../middlewares/product.middleware";
+import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 
 const productsRouter = Router();
 

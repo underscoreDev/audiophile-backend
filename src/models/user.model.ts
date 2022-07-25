@@ -1,11 +1,10 @@
 /* eslint-disable no-invalid-this */
-import { Schema, model, Model } from "mongoose";
-import valid from "validator";
-import bcrypt from "bcrypt";
-import { config } from "dotenv";
 import crypto from "crypto";
-import { roles } from "../interface";
-import { UserProps, UserMethods } from "../interface/index";
+import bcrypt from "bcrypt";
+import valid from "validator";
+import { config } from "dotenv";
+import { Schema, model, Model } from "mongoose";
+import { UserProps, UserMethods, roles } from "../interface";
 
 config();
 

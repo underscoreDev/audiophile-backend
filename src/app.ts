@@ -1,15 +1,15 @@
-import express, { Request, Response, Application } from "express";
-import { globalErrorHandler } from "./controllers/handleAppError.controller";
-import productsRouter from "./routes/product.route";
 import usersRouter from "./routes/user.route";
+import productsRouter from "./routes/product.route";
+import express, { Request, Response, Application } from "express";
 import { AppError } from "./middlewares/handleAppError.middleware";
+import { globalErrorHandler } from "./controllers/handleAppError.controller";
 
 const app: Application = express();
 
 app.use(express.json());
 
-app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/products", productsRouter);
 
 app.get("/", (_req: Request, res: Response) =>
   res.status(200).json({

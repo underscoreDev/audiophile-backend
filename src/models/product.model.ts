@@ -1,7 +1,6 @@
-/* eslint-disable space-before-function-paren */
 /* eslint-disable no-invalid-this */
-import { Schema, model } from "mongoose";
 import slugify from "slugify";
+import { Schema, model } from "mongoose";
 
 const productsSchema = new Schema({
   slug: String,
@@ -71,21 +70,6 @@ productsSchema.pre("save", function (next) {
   });
   next();
 });
-
-/*
-document middleware: runs after save() and create()
-productsSchema.post("save", function (doc, next) {
-  console.log(doc);
-  next();
-});
-
-*/
-
-// QUERY MIDDLEWARE
-
-// productsSchema.pre("find", function () {
-//   this.find({ secret: { $ne: true } });
-// });
 
 const Product = model("Product", productsSchema);
 
