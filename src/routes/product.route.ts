@@ -10,7 +10,7 @@ import {
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import { aliasTopProducts } from "../middlewares/product.middleware";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
-import { roles } from "../models/user.model";
+import { roles } from "../interface";
 
 const productsRouter = Router();
 

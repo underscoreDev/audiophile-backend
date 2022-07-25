@@ -4,7 +4,8 @@ import { config } from "dotenv";
 import { Types } from "mongoose";
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "./handleAppError.middleware";
-import User, { roles } from "../models/user.model";
+import User from "../models/user.model";
+import { roles } from "../interface/index";
 config();
 
 const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;

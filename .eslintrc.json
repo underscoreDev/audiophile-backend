@@ -15,6 +15,7 @@
     "quotes": ["error", "double"],
     "object-curly-spacing": ["error", "always"],
     "new-cap": ["error", { "capIsNew": false }],
+    "space-before-function-paren": ["error", { "anonymous": "ignore", "named": "always" }],
     "indent": ["error", 2, { "FunctionExpression": { "parameters": "first" } }],
     // "implicit-arrow-linebreak": ["error", "beside"],
     // "arrow-body-style": ["error", "as-needed"],

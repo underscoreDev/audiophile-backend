@@ -1,11 +1,11 @@
+import crypto from "crypto";
 import validator from "validator";
 import User from "../models/user.model";
-import { UserProps } from "../models/user.model";
 import { signJwt } from "../middlewares/auth.middleware";
 import { Response, Request, NextFunction } from "express";
 import { AppError } from "../middlewares/handleAppError.middleware";
 import sendEmail from "../utils/email.util";
-import crypto from "crypto";
+import { UserProps } from "../interface/index";
 
 export const signUp = async (req: Request, res: Response) => {
   const { firstname, role, lastname, email, password, passwordConfirm, photo }: UserProps =

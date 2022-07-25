@@ -1,40 +1,15 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-invalid-this */
-/* eslint-disable space-before-function-paren */
 import { Schema, model, Model } from "mongoose";
 import valid from "validator";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import crypto from "crypto";
+import { roles } from "../interface";
+import { UserProps, UserMethods } from "../interface/index";
 
 config();
 
 const { SALT_ROUNDS } = process.env;
-
-export enum roles {
-  user = "user",
-  manager = "manager",
-  admin = "admin",
-}
-
-export interface UserProps {
-  firstname: string;
-  lastname: string;
-  email: string;
-  photo: string;
-  password: string;
-  passwordConfirm: string | undefined;
-  passwordChangedAt: Date | number;
-  role: roles;
-  passwordResetToken: String | undefined;
-  passwordResetExpires: Date | undefined;
-}
-
-export interface UserMethods {
-  createPasswordResetToken(): string;
-  changedPasswordAfter(jwtTimeStamp: number): Boolean;
-  comparePasswords(enteredP: string, encryptedP: string): Promise<boolean>;
-}
 
 type UserModel = Model<UserProps, {}, UserMethods>;
 
