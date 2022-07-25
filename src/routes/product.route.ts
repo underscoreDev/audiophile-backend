@@ -9,6 +9,8 @@ import {
 } from "../controllers/product.controller";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import { aliasTopProducts } from "../middlewares/product.middleware";
+import { protect, restrictTo } from "../middlewares/auth.middleware";
+import { roles } from "../models/user.model";
 
 const productsRouter = Router();
 
@@ -21,6 +23,6 @@ productsRouter
   .route("/:product_id")
   .get(catchAsync(getOneProduct))
   .patch(catchAsync(updateProduct))
-  .delete(catchAsync(deleteProduct));
+  .delete(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(deleteProduct));
 
 export default productsRouter;
