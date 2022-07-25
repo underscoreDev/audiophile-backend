@@ -82,8 +82,21 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
   const resetToken = req.params.reset_id;
   const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-  const user = await User.findOne({ passwordResetToken: hashedToken });
-  return res
-    .status(200)
-    .json({ status: "success", data: { resetToken }, message: "password reset" });
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new AppError("Token expired or invalid", 400));
+  }
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  //  else sign jwt and login the user
+  const token = signJwt(user._id);
+  // send to client
+  return res.status(200).json({ status: "success", data: { token } });
 };
