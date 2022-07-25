@@ -4,6 +4,8 @@ import { UserProps } from "../models/user.model";
 import { signJwt } from "../middlewares/auth.middleware";
 import { Response, Request, NextFunction } from "express";
 import { AppError } from "../middlewares/handleAppError.middleware";
+import sendEmail from "../utils/email.util";
+import crypto from "crypto";
 
 export const signUp = async (req: Request, res: Response) => {
   const { firstname, role, lastname, email, password, passwordConfirm, photo }: UserProps =
@@ -45,4 +47,43 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   const token = signJwt(user._id);
   // send to client
   return res.status(200).json({ status: "success", data: { token } });
+};
+
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError("There is no user with this email address", 404));
+  }
+  const resetToken = user.createPasswordResetToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/users/reset-password/${resetToken}`;
+  // eslint-disable-next-line max-len
+  const message = `<h2>Forgot password ?.</h2> <h3>Click the link below to reset your password</h3><a href=${resetUrl} target="_blank">Reset Password</a> <h4>Valid for 10 minutes</h4>`;
+  try {
+    await sendEmail({
+      from: "Audiophile <audiophile@audiophile.com>",
+      to: user.email,
+      subject: "Password reset token",
+      html: message,
+    });
+    return res
+      .status(200)
+      .json({ status: "success", message: "Password Reset Token sent to Email" });
+  } catch (error) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError(`There was an error sending the token ${error}`, 500));
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  const resetToken = req.params.reset_id;
+  const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+  const user = await User.findOne({ passwordResetToken: hashedToken });
+  return res
+    .status(200)
+    .json({ status: "success", data: { resetToken }, message: "password reset" });
 };

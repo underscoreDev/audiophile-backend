@@ -5,6 +5,7 @@ import { Schema, model, Model } from "mongoose";
 import valid from "validator";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
+import crypto from "crypto";
 
 config();
 
@@ -25,9 +26,12 @@ export interface UserProps {
   passwordConfirm: string | undefined;
   passwordChangedAt: Date;
   role: roles;
+  passwordResetToken: String | undefined;
+  passwordResetExpires: Date | undefined;
 }
 
 export interface UserMethods {
+  createPasswordResetToken(): string;
   changedPasswordAfter(jwtTimeStamp: number): Boolean;
   comparePasswords(enteredP: string, encryptedP: string): Promise<boolean>;
 }
@@ -75,6 +79,8 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>({
     },
   },
   passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   role: {
     type: String,
     enum: [roles.admin, roles.user, roles.manager],
@@ -104,6 +110,17 @@ userSchema.methods.changedPasswordAfter = function (jwtTimestamp: number) {
     return jwtTimestamp < changedTimestamp;
   }
   return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  // create unencrypted reset token
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  // create and save encrypted reset token to database
+  this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  console.log(resetToken, this.passwordResetToken);
+  // send the unencrypted reset token to users email
+  return resetToken;
 };
 
 const User = model<UserProps, UserModel>("User", userSchema);

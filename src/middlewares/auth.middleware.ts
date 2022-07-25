@@ -5,7 +5,6 @@ import { Types } from "mongoose";
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "./handleAppError.middleware";
 import User, { roles } from "../models/user.model";
-// import { roles } from '../models/user.model';
 config();
 
 const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
