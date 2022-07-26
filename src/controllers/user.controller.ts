@@ -1,3 +1,4 @@
+/* eslint-disable no-new-object */
 import User from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../middlewares/handleAppError.middleware";
@@ -7,16 +8,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
   return res.status(200).json({ status: "success", data: { users } });
 };
 
-const filterObj = (obj: {}, allowedFields: string[]) => {
-  const newObj = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) {
-      newObj[el] = obj[el];
-    }
-  });
-  return newObj;
-};
-
 export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
   const { password, passwordConfirm } = req.body;
   if (password || passwordConfirm) {
@@ -24,13 +15,19 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
       new AppError("This route is not for password updates. Please use /update-password", 400)
     );
   }
-  // 2) Filtered out unwanted fields names that are not allowed to be updated
-  const filteredBody = filterObj(req.body, ["name", "email"]);
-  const user = await User.findByIdAndUpdate(req.body.user._id, filteredBody, {
+
+  const obj = {
+    firstname: req.body.firstname ?? req.body.user.firstname,
+    lastname: req.body.lastname ?? req.body.user.lastname,
+    email: req.body.email ?? req.body.user.email,
+  };
+
+  const user = await User.findByIdAndUpdate(req.body.user._id, obj, {
     new: true,
     runValidators: true,
   });
-  return res.status(200).json({ status: "success", data: { user } });
+
+  return res.status(200).json({ status: "User Updated successfully", data: { user } });
 };
 
 export const deleteMe = async (req: Request, res: Response) => {
