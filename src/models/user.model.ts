@@ -60,6 +60,11 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>({
     enum: [roles.admin, roles.user, roles.manager],
     default: roles.user,
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 userSchema.pre("save", async function (next) {

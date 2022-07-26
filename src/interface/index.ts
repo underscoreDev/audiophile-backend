@@ -16,6 +16,7 @@ export interface UserProps {
   role: roles;
   passwordResetToken: String | undefined;
   passwordResetExpires: Date | undefined;
+  active: Boolean;
 }
 
 export interface UserMethods {

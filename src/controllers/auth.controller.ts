@@ -100,3 +100,26 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   // send to client
   return res.status(200).json({ status: "success", data: { token } });
 };
+
+export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+  // get user from collection
+  const { oldPassword, newPassword, newPasswordConfirm } = req.body;
+
+  // check if user exists
+  const user = await User.findById(req.body.user._id).select("+password");
+
+  // check if posted current password is correct
+  const validPassword = await user?.comparePasswords(oldPassword, user.password);
+  // return an error if anything is incorrect
+  if (!user || !validPassword) {
+    return next(new AppError("Wrong password", 401));
+  }
+  // if so, update password
+  user.password = newPassword;
+  user.passwordConfirm = newPasswordConfirm;
+  await user.save();
+  // log user in, send jwt
+  const token = signJwt(user._id);
+  // send to client
+  return res.status(200).json({ status: "Password Updated Successfully", data: { token } });
+};
