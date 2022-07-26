@@ -33,7 +33,7 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
   return res.status(200).json({ status: "success", data: { user } });
 };
 
-exports.deleteMe = async (req: Request, res: Response) => {
+export const deleteMe = async (req: Request, res: Response) => {
   await User.findByIdAndUpdate(req.body.user._id, { active: false });
 
   res.status(204).json({
@@ -42,25 +42,25 @@ exports.deleteMe = async (req: Request, res: Response) => {
   });
 };
 
-exports.getUser = (req: Request, res: Response) => {
+export const getUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: "error",
     message: "This route is not yet defined!",
   });
 };
-exports.createUser = (req: Request, res: Response) => {
+export const createUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: "error",
     message: "This route is not yet defined!",
   });
 };
-exports.updateUser = (req: Request, res: Response) => {
+export const updateUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: "error",
     message: "This route is not yet defined!",
   });
 };
-exports.deleteUser = (req: Request, res: Response) => {
+export const deleteUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: "error",
     message: "This route is not yet defined!",
