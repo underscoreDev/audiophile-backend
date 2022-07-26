@@ -100,7 +100,6 @@ userSchema.methods.createPasswordResetToken = function () {
   // create and save encrypted reset token to database
   this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-  console.log(resetToken, this.passwordResetToken);
   // send the unencrypted reset token to users email
   return resetToken;
 };
