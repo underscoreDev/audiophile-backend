@@ -8,7 +8,7 @@ import { AppError } from "./handleAppError.middleware";
 import { Request, Response, NextFunction } from "express";
 config();
 
-const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
+const { JWT_SECRET, JWT_EXPIRES_IN, NODE_ENV } = process.env;
 
 export const signJwt = (id: Types.ObjectId) =>
   jwt.sign({ id }, JWT_SECRET as string, { expiresIn: JWT_EXPIRES_IN });
@@ -48,3 +48,16 @@ export const restrictTo =
     }
     next();
   };
+
+export const createSendToken = (user: any, statusCode: number, res: Response) => {
+  const token = signJwt(user._id);
+
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: NODE_ENV === "production" ? true : false,
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+  });
+
+  // send to client
+  return res.status(statusCode).json({ status: "Success", token, data: { user } });
+};

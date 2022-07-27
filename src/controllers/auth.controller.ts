@@ -1,32 +1,36 @@
 import crypto from "crypto";
+import { config } from "dotenv";
 import validator from "validator";
 import User from "../models/user.model";
 import { UserProps } from "../interface";
 import sendEmail from "../utils/email.util";
-import { signJwt } from "../middlewares/auth.middleware";
 import { Response, Request, NextFunction } from "express";
+import { createSendToken } from "../middlewares/auth.middleware";
 import { AppError } from "../middlewares/handleAppError.middleware";
 
+config();
+
 export const signUp = async (req: Request, res: Response) => {
-  const { firstname, role, lastname, email, password, passwordConfirm, photo }: UserProps =
-    req.body;
+  const { firstname, lastname, email, password, passwordConfirm, photo }: UserProps = req.body;
   // create user
   const newUser = await User.create({
-    email,
     photo,
-    role,
+    email,
     password,
     lastname,
     firstname,
     passwordConfirm,
   });
-  // generate jwt token
-  const token = signJwt(newUser._id);
-  // send to client
-  return res.status(201).json({
-    status: "User created Successfully",
-    data: { token, user: newUser },
-  });
+
+  const user = {
+    _id: newUser._id,
+    email: newUser.email,
+    photo: newUser.photo,
+    lastname: newUser.lastname,
+    firstname: newUser.firstname,
+  };
+
+  createSendToken(user, 201, res);
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -43,10 +47,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   if (!user || !validPassword) {
     return next(new AppError("Invalid Login credentials", 401));
   }
-  //  else sign jwt and login the user
-  const token = signJwt(user._id);
-  // send to client
-  return res.status(200).json({ status: "success", data: { token } });
+  createSendToken(user, 200, res);
 };
 
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -95,10 +96,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   user.passwordResetExpires = undefined;
   await user.save();
 
-  //  else sign jwt and login the user
-  const token = signJwt(user._id);
-  // send to client
-  return res.status(200).json({ status: "success", data: { token } });
+  createSendToken(user, 200, res);
 };
 
 export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -118,8 +116,5 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   user.password = newPassword;
   user.passwordConfirm = newPasswordConfirm;
   await user.save();
-  // log user in, send jwt
-  const token = signJwt(user._id);
-  // send to client
-  return res.status(200).json({ status: "Password Updated Successfully", data: { token } });
+  createSendToken(user, 200, res);
 };
