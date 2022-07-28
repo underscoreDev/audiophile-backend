@@ -16,13 +16,13 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>({
   firstname: {
     type: String,
     minlength: 2,
-    maxlength: 15,
+    // maxlength: 15,
     required: [true, "Please enter your firstname"],
   },
   lastname: {
     type: String,
     minlength: 2,
-    maxlength: 15,
+    // maxlength: 15,
     required: [true, "Please enter your lasttname"],
   },
   email: {
