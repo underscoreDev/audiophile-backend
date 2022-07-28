@@ -73,6 +73,7 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>({
     default: false,
     select: false,
   },
+
   emailVerificationToken: String,
   emailVerificationTokenExpires: Date,
 

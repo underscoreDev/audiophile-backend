@@ -2,38 +2,48 @@
 import slugify from "slugify";
 import { Schema, model } from "mongoose";
 
-const productsSchema = new Schema({
+const productSchema = new Schema({
   slug: String,
+
   new: Boolean,
-  shortName: String,
+
   name: {
     type: String,
     trim: true,
     required: [true, "A product must have a name"],
     minlength: [2, "A product must have more than two characters"],
   },
+
   price: { type: Number, required: [true, "A product must have a price"] },
+
   image: { type: String, required: [true, "A product must have an Image"] },
+
   features: { type: String, trim: true, required: [true, "A product must have some features"] },
+
   description: {
     type: String,
     trim: true,
     required: [true, "A product must have a description"],
   },
-  gallery: [String],
+
+  productImageGallery: [String],
+
   ratingsAverage: {
     type: Number,
     default: 4.5,
   },
+
   ratingsQuantity: {
     type: Number,
     default: 0,
   },
+
   createdAt: {
     type: Date,
     default: Date.now(),
     select: false,
   },
+
   category: {
     type: String,
     trim: true,
@@ -58,12 +68,12 @@ const productsSchema = new Schema({
   ],
 });
 
-productsSchema.virtual("discount").get(function () {
+productSchema.virtual("discount").get(function () {
   return this.price - 20;
 });
 
 // document middleware: runs before save() and create()
-productsSchema.pre("save", function (next) {
+productSchema.pre("save", function (next) {
   this.slug = slugify(this.name, {
     lower: true,
     replacement: "-",
@@ -71,6 +81,6 @@ productsSchema.pre("save", function (next) {
   next();
 });
 
-const Product = model("Product", productsSchema);
+const Product = model("Product", productSchema);
 
 export default Product;
