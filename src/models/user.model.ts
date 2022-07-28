@@ -1,12 +1,10 @@
 /* eslint-disable no-invalid-this */
+import "dotenv/config";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import valid from "validator";
-import { config } from "dotenv";
-import { Schema, model, Model } from "mongoose";
+import { Schema, model, Model, Query } from "mongoose";
 import { UserProps, UserMethods, roles } from "../interface";
-
-config();
 
 const { SALT_ROUNDS } = process.env;
 
@@ -16,32 +14,37 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>({
   firstname: {
     type: String,
     minlength: 2,
-    // maxlength: 15,
-    required: [true, "Please enter your firstname"],
+    maxlength: 20,
+    required: [true, "Please enter your First name"],
   },
+
   lastname: {
     type: String,
     minlength: 2,
-    // maxlength: 15,
-    required: [true, "Please enter your lasttname"],
+    maxlength: 20,
+    required: [true, "Please enter your Last name"],
   },
+
   email: {
     type: String,
     unique: true,
     lowercase: true,
-    required: true,
+    required: [true, "Please enter your Email"],
     validate: [valid.isEmail, "Please enter a valid email"],
   },
+
   photo: String,
+
   password: {
     type: String,
-    minlength: 8,
+    minlength: 6,
     required: [true, "Please provide a password"],
     select: false,
   },
+
   passwordConfirm: {
     type: String,
-    minlength: 8,
+    minlength: 6,
     required: [true, "Please confirm your password"],
     validate: {
       // This only works on create() or save()
@@ -49,32 +52,47 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>({
         const user = this as UserProps;
         return el === user.password;
       },
-      message: "Psswords aren't the same",
+      message: "Passwords aren't the same",
     },
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
+
   role: {
     type: String,
     enum: [roles.admin, roles.user, roles.manager],
     default: roles.user,
   },
+
   active: {
     type: Boolean,
     default: true,
     select: false,
   },
+
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+    select: false,
+  },
+  emailVerificationToken: String,
+  emailVerificationTokenExpires: Date,
+
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetTokenExpires: Date,
 });
 
+// Document middleware (this points to the current document)
 userSchema.pre("save", async function (next) {
+  // Only run this function if password was actually modified
   if (!this.isModified("password")) {
     return next();
+  } else {
+    // hash and salt the password, since it wasn't modified
+    this.password = await bcrypt.hash(this.password, Number(SALT_ROUNDS as string));
+    // delete the passwordConfirm field from the database
+    this.passwordConfirm = undefined;
+    next();
   }
-
-  this.password = await bcrypt.hash(this.password, Number(SALT_ROUNDS as string));
-  this.passwordConfirm = undefined;
-  next();
 });
 
 userSchema.pre("save", async function (next) {
@@ -86,19 +104,26 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.pre("find", function (next) {
+// query middleware (to exclude all users whose active property is set to false)
+// (This is for users who deleted their account)
+userSchema.pre<Query<UserProps, UserModel>>(/^find/, function (next) {
+  // this points to the current query
   this.find({ active: { $ne: false } });
   next();
 });
 
-userSchema.methods.comparePasswords = async function (enteredP: string, encryptedP: string) {
-  return await bcrypt.compare(enteredP, encryptedP);
+// check if the password the user entered is the same with the password in the database
+userSchema.methods.comparePasswords = async function (
+  enteredPassword: string,
+  encryptedPassword: string
+) {
+  return await bcrypt.compare(enteredPassword, encryptedPassword);
 };
 
+// check if the password was changed
 userSchema.methods.changedPasswordAfter = function (jwtTimestamp: number) {
   if (this.passwordChangedAt) {
     const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
-
     return jwtTimestamp < changedTimestamp;
   }
   return false;
@@ -109,7 +134,7 @@ userSchema.methods.createPasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
   // create and save encrypted reset token to database
   this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
   // send the unencrypted reset token to users email
   return resetToken;
 };

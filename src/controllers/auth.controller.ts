@@ -74,7 +74,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
       .json({ status: "success", message: "Password Reset Token sent to Email" });
   } catch (error) {
     user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
+    user.passwordResetTokenExpires = undefined;
     await user.save({ validateBeforeSave: false });
     return next(new AppError(`There was an error sending the token ${error}`, 500));
   }
@@ -85,7 +85,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   const user = await User.findOne({
     passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
+    passwordResetTokenExpires: { $gt: Date.now() },
   });
   if (!user) {
     return next(new AppError("Token expired or invalid", 400));
@@ -93,7 +93,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
-  user.passwordResetExpires = undefined;
+  user.passwordResetTokenExpires = undefined;
   await user.save();
 
   createSendToken(user, 200, res);

@@ -15,12 +15,15 @@ export interface UserProps {
   passwordChangedAt: Date | number;
   role: roles;
   passwordResetToken: String | undefined;
-  passwordResetExpires: Date | undefined;
+  passwordResetTokenExpires: Date | undefined;
   active: Boolean;
+  isEmailVerified: Boolean;
+  emailVerificationToken: string;
+  emailVerificationTokenExpires: string;
 }
 
 export interface UserMethods {
   createPasswordResetToken(): string;
   changedPasswordAfter(jwtTimeStamp: number): Boolean;
-  comparePasswords(enteredP: string, encryptedP: string): Promise<boolean>;
+  comparePasswords(enteredP: string, encryptedP: string): Promise<Boolean>;
 }
