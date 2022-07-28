@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { config } from "dotenv";
 import validator from "validator";
 import User from "../models/user.model";
-import { UserProps } from "../interface";
+import { UserProps } from "../interface/user.interface";
 import sendEmail from "../utils/email.util";
 import { Response, Request, NextFunction } from "express";
 import { createSendToken } from "../middlewares/auth.middleware";

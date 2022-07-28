@@ -4,7 +4,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import valid from "validator";
 import { Schema, model, Model, Query } from "mongoose";
-import { UserProps, UserMethods, roles } from "../interface";
+import { UserProps, UserMethods, roles } from "../interface/user.interface";
 
 const { SALT_ROUNDS } = process.env;
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { roles } from "../interface";
+import { roles } from "../interface/user.interface";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { aliasTopProducts } from "../middlewares/product.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";

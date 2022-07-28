@@ -84,3 +84,7 @@ productSchema.pre("save", function (next) {
 const Product = model("Product", productSchema);
 
 export default Product;
+
+/*
+1) add the model, interface and methods for the product schema
+*/

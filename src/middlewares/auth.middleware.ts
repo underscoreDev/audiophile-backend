@@ -2,7 +2,7 @@
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 import { Types } from "mongoose";
-import { roles } from "../interface";
+import { roles } from "../interface/user.interface";
 import User from "../models/user.model";
 import { AppError } from "./handleAppError.middleware";
 import { Request, Response, NextFunction } from "express";
