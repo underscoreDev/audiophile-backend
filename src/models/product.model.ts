@@ -1,8 +1,11 @@
 /* eslint-disable no-invalid-this */
 import slugify from "slugify";
-import { Schema, model } from "mongoose";
+import { Schema, model, Model } from "mongoose";
+import { ProductProps } from "../interface/products.interface";
 
-const productSchema = new Schema({
+type ProductsModel = Model<ProductProps, {}, {}>;
+
+const productSchema = new Schema<ProductProps, ProductsModel, {}>({
   slug: String,
 
   new: Boolean,
@@ -81,10 +84,6 @@ productSchema.pre("save", function (next) {
   next();
 });
 
-const Product = model("Product", productSchema);
+const Product = model<ProductProps, ProductsModel>("Product", productSchema);
 
 export default Product;
-
-/*
-1) add the model, interface and methods for the product schema
-*/
