@@ -56,7 +56,7 @@ export const resendEmailConfirmationToken = async (
   next: NextFunction
 ) => {
   const { email } = req.body;
-  // check if email and password is entered and if email is valid
+  // check if email is valid
   if (!email || !validator.isEmail(email)) {
     return next(new AppError("Please provide a valid email", 400));
   }
@@ -102,6 +102,22 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError("There is no user with this email address", 404));
+  }
+  const resetToken = user.createPasswordResetToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  await sendForgotPasswordToken(req, res, next, { resetToken, user });
+};
+
+export const resendForgotPasswordToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new AppError("There is no user with this email address", 404));

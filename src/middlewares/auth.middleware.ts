@@ -83,12 +83,12 @@ export const semdEmailVerificationLink = async (
     });
     return res
       .status(201)
-      .json({ status: "Successful", message: "Confirmation code sent to email" });
+      .json({ status: "Successful", message: "Confirmation Link sent to email" });
   } catch (error) {
     user.emailVerificationToken = undefined;
     user.emailVerificationTokenExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(new AppError(`There was an error sending the code ${error}`, 500));
+    return next(new AppError(`There was an error sending the Confirmation Link ${error}`, 500));
   }
 };
 

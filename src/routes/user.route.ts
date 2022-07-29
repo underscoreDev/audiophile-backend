@@ -30,6 +30,9 @@ usersRouter.route("/login").post(catchAsync(login));
 // FORGOT PASSWORD
 usersRouter.route("/forgot-password").patch(catchAsync(forgotPassword));
 
+// RESEND FORGOT PASSWORD CODE
+usersRouter.route("/resend-forgot-password-code").patch(catchAsync(forgotPassword));
+
 // PASSWORD RESET
 usersRouter.route("/reset-password").post(catchAsync(resetPassword));
 
