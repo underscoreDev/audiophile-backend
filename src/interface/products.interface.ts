@@ -11,6 +11,8 @@ export interface ProductProps {
   new: Boolean;
   name: string;
   price: number;
+  quantity: number;
+  inStock: Boolean;
   image: string;
   description: string;
   features: string;
