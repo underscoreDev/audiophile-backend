@@ -18,12 +18,13 @@ export interface UserProps {
   passwordResetTokenExpires: Date | undefined;
   active: Boolean;
   isEmailVerified: Boolean;
-  emailVerificationToken: string;
-  emailVerificationTokenExpires: string;
+  emailVerificationToken: string | undefined;
+  emailVerificationTokenExpires: string | undefined;
 }
 
 export interface UserMethods {
   createPasswordResetToken(): string;
   changedPasswordAfter(jwtTimeStamp: number): Boolean;
   comparePasswords(enteredP: string, encryptedP: string): Promise<Boolean>;
+  createEmailVerificationToken(): string;
 }

@@ -9,12 +9,20 @@ import {
   resetPassword,
   forgotPassword,
   updatePassword,
+  confirmEmail,
+  resendEmailConfirmationToken,
 } from "../controllers/auth.controller";
 
 const usersRouter = Router();
 
 // REGISTER USER
 usersRouter.route("/register").post(catchAsync(signUp));
+
+// CONFIRM EMAIL
+usersRouter.route("/confirm-email/:confirm_token").post(catchAsync(confirmEmail));
+
+// RESEND CONFIRMATION CODE
+usersRouter.route("/resend-email-confirmation-code").post(catchAsync(resendEmailConfirmationToken));
 
 // LOGIN USER
 usersRouter.route("/login").post(catchAsync(login));

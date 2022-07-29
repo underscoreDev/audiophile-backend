@@ -10,10 +10,10 @@ import { AppError } from "../middlewares/handleAppError.middleware";
 
 config();
 
-export const signUp = async (req: Request, res: Response) => {
+export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   const { firstname, lastname, email, password, passwordConfirm, photo }: UserProps = req.body;
   // create user
-  const newUser = await User.create({
+  const user = await User.create({
     photo,
     email,
     password,
@@ -21,16 +21,97 @@ export const signUp = async (req: Request, res: Response) => {
     firstname,
     passwordConfirm,
   });
+  const emailToken = user.createEmailVerificationToken();
+  await user.save({ validateBeforeSave: false });
 
-  const user = {
-    _id: newUser._id,
-    email: newUser.email,
-    photo: newUser.photo,
-    lastname: newUser.lastname,
-    firstname: newUser.firstname,
-  };
+  try {
+    const verifyUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/users/confirm-email/${emailToken}`;
 
-  createSendToken(user, 201, res);
+    // eslint-disable-next-line max-len
+    const message = `<h2>Thanks for Signing Up on Audiophile</h2> <h3>Please Click this link to Confirms your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
+    await sendEmail({
+      from: "Audiophile <audiophile@audiophile.com>",
+      to: user.email,
+      subject: "Email Confirmation Code",
+      html: message,
+    });
+
+    return res
+      .status(201)
+      .json({ status: "Registration Successful", message: "Please confirm your email" });
+  } catch (error) {
+    user.emailVerificationToken = undefined;
+    user.emailVerificationTokenExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(
+      new AppError(`Registration Unsuccessful. There was an error sending the token ${error}`, 500)
+    );
+  }
+};
+
+export const confirmEmail = async (req: Request, res: Response, next: NextFunction) => {
+  const confirmationCode = req.params.confirm_token;
+  const hashedToken = crypto.createHash("sha256").update(confirmationCode).digest("hex");
+
+  const user = await User.findOne({
+    emailVerificationToken: hashedToken,
+    emailVerificationTokenExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new AppError("Token expired or invalid", 400));
+  }
+  user.isEmailVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationTokenExpires = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  createSendToken(user, 200, res);
+};
+
+export const resendEmailConfirmationToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email } = req.body;
+  // check if email and password is entered and if email is valid
+  if (!email || !validator.isEmail(email)) {
+    return next(new AppError("Please provide a valid email", 400));
+  }
+  // check if user exists
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new AppError("User not found", 401));
+  }
+
+  const emailToken = user.createEmailVerificationToken();
+  await user.save({ validateBeforeSave: false });
+
+  try {
+    const verifyUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/users/confirm-email/${emailToken}`;
+
+    // eslint-disable-next-line max-len
+    const message = `<h3>Click this link to Confirm your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
+    await sendEmail({
+      from: "Audiophile <audiophile@audiophile.com>",
+      to: user.email,
+      subject: "Email Confirmation Code",
+      html: message,
+    });
+    return res
+      .status(201)
+      .json({ status: "Successful", message: "Confirmation code sent to email" });
+  } catch (error) {
+    user.emailVerificationToken = undefined;
+    user.emailVerificationTokenExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError(`There was an error sending the code ${error}`, 500));
+  }
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -40,12 +121,15 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     return next(new AppError("Please provide a valid email or password", 400));
   }
   // check if user exists
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email }).select("+password").select("+isEmailVerified");
   // check if the password is correct
   const validPassword = await user?.comparePasswords(password, user.password);
   // return an error if anything is incorrect
   if (!user || !validPassword) {
     return next(new AppError("Invalid Login credentials", 401));
+  }
+  if (!user.isEmailVerified) {
+    return next(new AppError("Please verify your email", 401));
   }
   createSendToken(user, 200, res);
 };
@@ -118,3 +202,11 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   await user.save();
   createSendToken(user, 200, res);
 };
+
+// const user = {
+//   _id: newUser._id,
+//   email: newUser.email,
+//   photo: newUser.photo,
+//   lastname: newUser.lastname,
+//   firstname: newUser.firstname,
+// };
