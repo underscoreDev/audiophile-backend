@@ -12,7 +12,14 @@ export const getAllProducts = async (req: Request, res: Response) => {
     .sort(parsed.sort)
     .select(parsed.select)
     .skip(skip)
-    .limit(Number(parsed.limit));
+    .limit(Number(parsed.limit))
+    .select("-features")
+    .select("-slug")
+    .select("-description")
+    .select("-productImageGallery")
+    .select("-includedItems")
+    .select("-ratingsQuantity")
+    .select("-quantity");
 
   return res.status(200).json({
     status: "success",
