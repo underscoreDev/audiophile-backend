@@ -1,12 +1,12 @@
 /* eslint-disable indent */
 import jwt from "jsonwebtoken";
-import { config } from "dotenv";
+import "dotenv/config";
 import { Types } from "mongoose";
 import { roles } from "../interface/user.interface";
 import User from "../models/user.model";
 import { AppError } from "./handleAppError.middleware";
 import { Request, Response, NextFunction } from "express";
-config();
+import sendEmail from "../utils/email.util";
 
 const { JWT_SECRET, JWT_EXPIRES_IN, NODE_ENV } = process.env;
 
@@ -60,4 +60,60 @@ export const createSendToken = (user: any, statusCode: number, res: Response) =>
 
   // send to client
   return res.status(statusCode).json({ status: "Success", token, data: { user } });
+};
+
+export const semdEmailVerificationLink = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  { user, emailToken }: any
+) => {
+  try {
+    const verifyUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/users/confirm-email/${emailToken}`;
+
+    // eslint-disable-next-line max-len
+    const message = `<h3>Click this link to Confirm your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
+    await sendEmail({
+      from: "Audiophile <audiophile@audiophile.com>",
+      to: user.email,
+      subject: "Email Confirmation Code",
+      html: message,
+    });
+    return res
+      .status(201)
+      .json({ status: "Successful", message: "Confirmation code sent to email" });
+  } catch (error) {
+    user.emailVerificationToken = undefined;
+    user.emailVerificationTokenExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError(`There was an error sending the code ${error}`, 500));
+  }
+};
+
+export const sendForgotPasswordToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  { resetToken, user }: any
+) => {
+  try {
+    // eslint-disable-next-line max-len
+    const message = `<h2>${resetToken} is your password reset token.</h2><h4>Valid for 10 minutes</h4>`;
+    await sendEmail({
+      from: "Audiophile <audiophile@audiophile.com>",
+      to: user.email,
+      subject: "Password reset token",
+      html: message,
+    });
+    return res
+      .status(200)
+      .json({ status: "success", message: "Password Reset Token sent user's Email" });
+  } catch (error) {
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError(`There was an error sending the token ${error}`, 500));
+  }
 };

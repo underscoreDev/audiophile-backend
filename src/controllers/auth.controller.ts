@@ -2,10 +2,13 @@ import "dotenv/config";
 import crypto from "crypto";
 import validator from "validator";
 import User from "../models/user.model";
-import sendEmail from "../utils/email.util";
 import { UserProps } from "../interface/user.interface";
 import { Response, Request, NextFunction } from "express";
-import { createSendToken } from "../middlewares/auth.middleware";
+import {
+  createSendToken,
+  semdEmailVerificationLink,
+  sendForgotPasswordToken,
+} from "../middlewares/auth.middleware";
 import { AppError } from "../middlewares/handleAppError.middleware";
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,32 +24,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
   });
   const emailToken = user.createEmailVerificationToken();
   await user.save({ validateBeforeSave: false });
-
-  try {
-    const verifyUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/users/confirm-email/${emailToken}`;
-
-    // eslint-disable-next-line max-len
-    const message = `<h2>Thanks for Signing Up on Audiophile</h2> <h3>Please Click this link to Confirms your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
-    await sendEmail({
-      from: "Audiophile <audiophile@audiophile.com>",
-      to: user.email,
-      subject: "Email Confirmation Code",
-      html: message,
-    });
-
-    return res
-      .status(201)
-      .json({ status: "Registration Successful", message: "Please confirm your email" });
-  } catch (error) {
-    user.emailVerificationToken = undefined;
-    user.emailVerificationTokenExpires = undefined;
-    await user.save({ validateBeforeSave: false });
-    return next(
-      new AppError(`Registration Unsuccessful. There was an error sending the token ${error}`, 500)
-    );
-  }
+  await semdEmailVerificationLink(req, res, next, { user, emailToken });
 };
 
 export const confirmEmail = async (req: Request, res: Response, next: NextFunction) => {
@@ -84,32 +62,9 @@ export const resendEmailConfirmationToken = async (
   if (!user) {
     return next(new AppError("User not found", 401));
   }
-
   const emailToken = user.createEmailVerificationToken();
   await user.save({ validateBeforeSave: false });
-
-  try {
-    const verifyUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/users/confirm-email/${emailToken}`;
-
-    // eslint-disable-next-line max-len
-    const message = `<h3>Click this link to Confirm your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
-    await sendEmail({
-      from: "Audiophile <audiophile@audiophile.com>",
-      to: user.email,
-      subject: "Email Confirmation Code",
-      html: message,
-    });
-    return res
-      .status(201)
-      .json({ status: "Successful", message: "Confirmation code sent to email" });
-  } catch (error) {
-    user.emailVerificationToken = undefined;
-    user.emailVerificationTokenExpires = undefined;
-    await user.save({ validateBeforeSave: false });
-    return next(new AppError(`There was an error sending the code ${error}`, 500));
-  }
+  await semdEmailVerificationLink(req, res, next, { user, emailToken });
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
@@ -141,24 +96,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
   await user.save({ validateBeforeSave: false });
 
-  // eslint-disable-next-line max-len
-  const message = `<h2>${resetToken} is your password reset token.</h2><h4>Valid for 10 minutes</h4>`;
-  try {
-    await sendEmail({
-      from: "Audiophile <audiophile@audiophile.com>",
-      to: user.email,
-      subject: "Password reset token",
-      html: message,
-    });
-    return res
-      .status(200)
-      .json({ status: "success", message: "Password Reset Token sent user's Email" });
-  } catch (error) {
-    user.passwordResetToken = undefined;
-    user.passwordResetTokenExpires = undefined;
-    await user.save({ validateBeforeSave: false });
-    return next(new AppError(`There was an error sending the token ${error}`, 500));
-  }
+  await sendForgotPasswordToken(req, res, next, { resetToken, user });
 };
 
 export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
