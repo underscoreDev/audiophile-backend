@@ -1,20 +1,19 @@
 /* eslint-disable no-invalid-this */
 import slugify from "slugify";
 import { Schema, model, Model } from "mongoose";
-import { ProductProps } from "../interface/products.interface";
+import { ProductProps, productsCategories } from "../interface/products.interface";
 
 type ProductsModel = Model<ProductProps, {}, {}>;
 
 const productSchema = new Schema<ProductProps, ProductsModel, {}>({
   slug: String,
-
   new: Boolean,
 
   name: {
     type: String,
     trim: true,
     required: [true, "A product must have a name"],
-    minlength: [2, "A product must have more than two characters"],
+    minlength: [2, "A product name must have at least two characters"],
   },
 
   price: { type: Number, required: [true, "A product must have a price"] },
@@ -52,7 +51,11 @@ const productSchema = new Schema<ProductProps, ProductsModel, {}>({
     trim: true,
     required: [true, "The product must belong to a category!"],
     enum: {
-      values: ["headphones", "earphones", "speakers"],
+      values: [
+        productsCategories.earphones,
+        productsCategories.headphones,
+        productsCategories.speakers,
+      ],
       message: "The category must be either 'headphones', 'earphones' or 'speakers'",
     },
   },
@@ -60,11 +63,13 @@ const productSchema = new Schema<ProductProps, ProductsModel, {}>({
   includedItems: [
     {
       quantity: {
-        type: String,
-        required: [true, "A product must inform how much of this item comes inside of the box."],
+        type: Number,
+        required: [true, "A product must inform how many of this item comes inside of the box."],
       },
+
       item: {
         type: String,
+        trim: true,
         required: [true, "A product must inform what comes inside of the box."],
       },
     },
