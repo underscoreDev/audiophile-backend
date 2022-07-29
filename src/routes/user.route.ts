@@ -19,7 +19,7 @@ const usersRouter = Router();
 usersRouter.route("/register").post(catchAsync(signUp));
 
 // CONFIRM EMAIL
-usersRouter.route("/confirm-email/:confirm_token").post(catchAsync(confirmEmail));
+usersRouter.route("/confirm-email/:confirm_token").get(catchAsync(confirmEmail));
 
 // RESEND CONFIRMATION CODE
 usersRouter.route("/resend-email-confirmation-code").post(catchAsync(resendEmailConfirmationToken));
@@ -31,7 +31,7 @@ usersRouter.route("/login").post(catchAsync(login));
 usersRouter.route("/forgot-password").patch(catchAsync(forgotPassword));
 
 // PASSWORD RESET
-usersRouter.route("/reset-password/:reset_id").get(catchAsync(resetPassword));
+usersRouter.route("/reset-password").post(catchAsync(resetPassword));
 
 // USER UPDATING THEIR USER INFO (name, email,address)
 usersRouter.route("/update-me").patch(catchAsync(protect), catchAsync(updateMe));

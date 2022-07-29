@@ -132,7 +132,7 @@ userSchema.methods.changedPasswordAfter = function (jwtTimestamp: number) {
 
 userSchema.methods.createPasswordResetToken = function () {
   // create unencrypted reset token
-  const resetToken = crypto.randomBytes(32).toString("hex");
+  const resetToken = crypto.randomBytes(3).toString("hex");
   // create and save encrypted reset token to database
   this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   this.passwordResetTokenExpires = Date.now() + 10 * 60 * 1000;
@@ -141,7 +141,7 @@ userSchema.methods.createPasswordResetToken = function () {
 };
 
 userSchema.methods.createEmailVerificationToken = function () {
-  const verificationToken = crypto.randomBytes(3).toString("hex");
+  const verificationToken = crypto.randomBytes(32).toString("hex");
   this.emailVerificationToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
   this.emailVerificationTokenExpires = Date.now() + 10 * 60 * 1000;
   return verificationToken;

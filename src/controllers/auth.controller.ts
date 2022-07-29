@@ -1,14 +1,12 @@
+import "dotenv/config";
 import crypto from "crypto";
-import { config } from "dotenv";
 import validator from "validator";
 import User from "../models/user.model";
-import { UserProps } from "../interface/user.interface";
 import sendEmail from "../utils/email.util";
+import { UserProps } from "../interface/user.interface";
 import { Response, Request, NextFunction } from "express";
 import { createSendToken } from "../middlewares/auth.middleware";
 import { AppError } from "../middlewares/handleAppError.middleware";
-
-config();
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   const { firstname, lastname, email, password, passwordConfirm, photo }: UserProps = req.body;
@@ -143,9 +141,8 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 
   await user.save({ validateBeforeSave: false });
 
-  const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/users/reset-password/${resetToken}`;
   // eslint-disable-next-line max-len
-  const message = `<h2>Forgot password ?.</h2> <h3>Click the link below to reset your password</h3><a href=${resetUrl} target="_blank">Reset Password</a> <h4>Valid for 10 minutes</h4>`;
+  const message = `<h2>${resetToken} is your password reset token.</h2><h4>Valid for 10 minutes</h4>`;
   try {
     await sendEmail({
       from: "Audiophile <audiophile@audiophile.com>",
@@ -155,7 +152,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     });
     return res
       .status(200)
-      .json({ status: "success", message: "Password Reset Token sent to Email" });
+      .json({ status: "success", message: "Password Reset Token sent user's Email" });
   } catch (error) {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
@@ -165,17 +162,20 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 };
 
 export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
-  const resetToken = req.params.reset_id;
+  const { resetToken, password, passwordConfirm } = req.body;
+
   const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetTokenExpires: { $gt: Date.now() },
   });
+
   if (!user) {
     return next(new AppError("Token expired or invalid", 400));
   }
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
   user.passwordResetToken = undefined;
   user.passwordResetTokenExpires = undefined;
   await user.save();
@@ -202,11 +202,3 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   await user.save();
   createSendToken(user, 200, res);
 };
-
-// const user = {
-//   _id: newUser._id,
-//   email: newUser.email,
-//   photo: newUser.photo,
-//   lastname: newUser.lastname,
-//   firstname: newUser.firstname,
-// };
