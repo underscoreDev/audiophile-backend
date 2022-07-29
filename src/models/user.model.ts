@@ -10,77 +10,80 @@ const { SALT_ROUNDS } = process.env;
 
 type UserModel = Model<UserProps, {}, UserMethods>;
 
-const userSchema = new Schema<UserProps, UserModel, UserMethods>({
-  firstname: {
-    type: String,
-    minlength: 2,
-    maxlength: 20,
-    required: [true, "Please enter your First name"],
-  },
-
-  lastname: {
-    type: String,
-    minlength: 2,
-    maxlength: 20,
-    required: [true, "Please enter your Last name"],
-  },
-
-  email: {
-    type: String,
-    unique: true,
-    lowercase: true,
-    required: [true, "Please enter your Email"],
-    validate: [valid.isEmail, "Please enter a valid email"],
-  },
-
-  photo: String,
-
-  password: {
-    type: String,
-    minlength: 6,
-    required: [true, "Please provide a password"],
-    select: false,
-  },
-
-  passwordConfirm: {
-    type: String,
-    minlength: 6,
-    required: [true, "Please confirm your password"],
-    validate: {
-      // This only works on create() or save()
-      validator: function (el: string): Boolean {
-        const user = this as UserProps;
-        return el === user.password;
-      },
-      message: "Passwords aren't the same",
+const userSchema = new Schema<UserProps, UserModel, UserMethods>(
+  {
+    firstname: {
+      type: String,
+      minlength: 2,
+      maxlength: 20,
+      required: [true, "Please enter your First name"],
     },
+
+    lastname: {
+      type: String,
+      minlength: 2,
+      maxlength: 20,
+      required: [true, "Please enter your Last name"],
+    },
+
+    email: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      required: [true, "Please enter your Email"],
+      validate: [valid.isEmail, "Please enter a valid email"],
+    },
+
+    photo: String,
+
+    password: {
+      type: String,
+      minlength: 6,
+      required: [true, "Please provide a password"],
+      select: false,
+    },
+
+    passwordConfirm: {
+      type: String,
+      minlength: 6,
+      required: [true, "Please confirm your password"],
+      validate: {
+        // This only works on create() or save()
+        validator: function (el: string): Boolean {
+          const user = this as UserProps;
+          return el === user.password;
+        },
+        message: "Passwords aren't the same",
+      },
+    },
+
+    role: {
+      type: String,
+      enum: [roles.admin, roles.user, roles.manager],
+      default: roles.user,
+    },
+
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
+
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+      select: false,
+    },
+
+    emailVerificationToken: String,
+    emailVerificationTokenExpires: Date,
+
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetTokenExpires: Date,
   },
-
-  role: {
-    type: String,
-    enum: [roles.admin, roles.user, roles.manager],
-    default: roles.user,
-  },
-
-  active: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-
-  isEmailVerified: {
-    type: Boolean,
-    default: false,
-    select: false,
-  },
-
-  emailVerificationToken: String,
-  emailVerificationTokenExpires: Date,
-
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetTokenExpires: Date,
-});
+  { versionKey: false }
+);
 
 // Document middleware (this points to the current document)
 userSchema.pre("save", async function (next) {

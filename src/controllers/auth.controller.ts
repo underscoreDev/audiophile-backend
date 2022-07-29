@@ -34,7 +34,10 @@ export const confirmEmail = async (req: Request, res: Response, next: NextFuncti
   const user = await User.findOne({
     emailVerificationToken: hashedToken,
     emailVerificationTokenExpires: { $gt: Date.now() },
-  });
+  })
+    .select("-password")
+    .select("-role")
+    .select("-passwordChangedAt");
 
   if (!user) {
     return next(new AppError("Token expired or invalid", 400));
@@ -74,7 +77,11 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     return next(new AppError("Please provide a valid email or password", 400));
   }
   // check if user exists
-  const user = await User.findOne({ email }).select("+password").select("+isEmailVerified");
+  const user = await User.findOne({ email })
+    .select("+password")
+    .select("+isEmailVerified")
+    .select("-role")
+    .select("-passwordChangedAt");
   // check if the password is correct
   const validPassword = await user?.comparePasswords(password, user.password);
   // return an error if anything is incorrect
@@ -84,7 +91,14 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   if (!user.isEmailVerified) {
     return next(new AppError("Please verify your email", 401));
   }
-  createSendToken(user, 200, res);
+  const sendUser = {
+    _id: user._id,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    email: user.email,
+    isEmailVerified: true,
+  };
+  createSendToken(sendUser, 200, res);
 };
 
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -107,7 +121,9 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetTokenExpires: { $gt: Date.now() },
-  });
+  })
+    .select("-role")
+    .select("-passwordChangedAt");
 
   if (!user) {
     return next(new AppError("Token expired or invalid", 400));
@@ -126,7 +142,10 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   const { oldPassword, newPassword, newPasswordConfirm } = req.body;
 
   // check if user exists
-  const user = await User.findById(req.body.user._id).select("+password");
+  const user = await User.findById(req.body.user._id)
+    .select("+password")
+    .select("-role")
+    .select("-passwordChangedAt");
 
   // check if posted current password is correct
   const validPassword = await user?.comparePasswords(oldPassword, user.password);
