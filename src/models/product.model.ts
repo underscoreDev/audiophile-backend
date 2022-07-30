@@ -78,12 +78,19 @@ const productSchema = new Schema<ProductProps, ProductsModel, {}>(
       },
     ],
   },
-  { versionKey: false }
+  { versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-// productSchema.virtual("discount").get(function () {
-//   return this.price - 20;
-// });
+productSchema.virtual("discount").get(function () {
+  return this.price - 20;
+});
+
+// Virtual populate
+productSchema.virtual("reviews", {
+  ref: "Reviews",
+  foreignField: "product",
+  localField: "_id",
+});
 
 // document middleware: runs before save() and create()
 productSchema.pre("save", function (next) {

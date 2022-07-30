@@ -22,4 +22,5 @@ export interface ProductProps {
   createdAt: Date | undefined;
   category: productsCategories;
   includedItems: [{ quantity: number; item: string }];
+  reviews: [];
 }

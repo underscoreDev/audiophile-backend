@@ -3,6 +3,7 @@ import helmet from "helmet";
 import xss from "xss-clean";
 import rateLimit from "express-rate-limit";
 import usersRouter from "./routes/user.route";
+import reviewsRouter from "./routes/review.route";
 import mongoSanitize from "express-mongo-sanitize";
 import productsRouter from "./routes/product.route";
 import express, { Request, Response, Application } from "express";
@@ -36,6 +37,7 @@ app.use(hpp());
 
 // API Routes
 app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/reviews", reviewsRouter);
 app.use("/api/v1/products", productsRouter);
 app.get("/api/v1", (_req: Request, res: Response) =>
   res.status(200).json({ message: "success", data: "Welcome to Audioplile Backend server" })

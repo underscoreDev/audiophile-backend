@@ -1,5 +1,5 @@
 export interface ReviewProps {
-  review: String;
+  review: string;
   rating: number;
   createdAt: Date;
   product: string;
