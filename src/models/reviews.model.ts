@@ -38,11 +38,6 @@ const reviewSchema = new Schema<ReviewProps, ReviewsModel, {}>(
 );
 
 reviewSchema.pre(/^find/, function (next) {
-  //   this.populate({
-  //     path: "product",
-  //     select: "name",
-  //   });
-
   this.populate({
     path: "user",
     select: "firstname photo",
