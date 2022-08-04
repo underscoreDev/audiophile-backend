@@ -34,8 +34,12 @@ productsRouter
 // GET TOP MOST EXPENSIVE PRODUCTS  (can be used for the admin dashboard)
 productsRouter
   .route("/top-5-products")
-  .get(catchAsync(protect), restrictTo([roles.admin, roles.manager]), aliasTopProducts)
-  .get(catchAsync(getAllProducts));
+  .get(
+    catchAsync(protect),
+    restrictTo([roles.admin, roles.manager]),
+    aliasTopProducts,
+    catchAsync(getAllProducts)
+  );
 
 // GET ONE, UPDATE AND DELETE PRODUCT
 productsRouter

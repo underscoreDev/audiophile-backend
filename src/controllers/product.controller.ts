@@ -1,8 +1,12 @@
 import Product from "../models/product.model";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { MongooseQueryParser } from "mongoose-query-parser";
-import { AppError } from "../middlewares/handleAppError.middleware";
-import { deleteHandler, createHandler, updateHandler } from "./handlerFactory.controller";
+import {
+  deleteHandler,
+  createHandler,
+  updateHandler,
+  getOneHandler,
+} from "./handlerFactory.controller";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   const parser = new MongooseQueryParser();
@@ -46,14 +50,7 @@ export const getProductStats = async (_req: Request, res: Response) => {
   return res.status(200).json({ status: "success", data: { stats } });
 };
 
-export const getOneProduct = async (req: Request, res: Response, next: NextFunction) => {
-  const product = await Product.findById(req.params.product_id).populate("reviews");
-  if (!product) {
-    return next(new AppError("No Product found with that id", 404));
-  }
-  return res.status(200).json({ status: "success", data: { product } });
-};
-
+export const getOneProduct = getOneHandler(Product, { path: "reviews" });
 export const createProduct = createHandler(Product);
 export const updateProduct = updateHandler(Product);
 export const deleteProduct = deleteHandler(Product);

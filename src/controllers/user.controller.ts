@@ -1,13 +1,27 @@
 /* eslint-disable no-new-object */
 import User from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
-import { createHandler, deleteHandler, updateHandler } from "./handlerFactory.controller";
+import { deleteHandler, updateHandler, getOneHandler } from "./handlerFactory.controller";
 import { AppError } from "../middlewares/handleAppError.middleware";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const users = await User.find();
   return res.status(200).json({ status: "success", data: { users } });
 };
+
+export const deleteMe = async (req: Request, res: Response) => {
+  await User.findByIdAndUpdate(req.body.user._id, { active: false });
+  return res.status(204).json({ status: "User Deleted Successfully", data: null });
+};
+
+export const getMe = async (req: Request, res: Response, next: NextFunction) => {
+  req.params.id = req.body.user._id;
+  next();
+};
+
+export const getUser = getOneHandler(User);
+export const updateUser = updateHandler(User);
+export const deleteUser = deleteHandler(User);
 
 export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
   const { password, passwordConfirm } = req.body;
@@ -30,23 +44,3 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
 
   return res.status(200).json({ status: "User Updated successfully", data: { user } });
 };
-
-export const deleteMe = async (req: Request, res: Response) => {
-  await User.findByIdAndUpdate(req.body.user._id, { active: false });
-
-  res.status(204).json({
-    status: "User Deleted Successfully",
-    data: null,
-  });
-};
-
-export const getUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined!",
-  });
-};
-
-export const createUser = createHandler(User);
-export const updateUser = updateHandler(User);
-export const deleteUser = deleteHandler(User);

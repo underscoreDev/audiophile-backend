@@ -12,23 +12,40 @@ export const deleteHandler =
     if (!doc) {
       return next(new AppError("No document found with that id", 404));
     }
-    return res.status(204).json({ status: "success", data: null });
+    return res.status(204).json({ status: "Deleted Successfully", data: null });
   };
 
 export const createHandler =
   (Model: typeof Reviews | typeof Product | typeof User) => async (req: Request, res: Response) => {
     const newP = await Model.create(req.body);
-    return res.status(201).json({ status: "success", data: { data: newP } });
+    return res.status(201).json({ status: "Created Successfully", data: { data: newP } });
   };
 
 export const updateHandler =
   (Model: any) => async (req: Request, res: Response, next: NextFunction) => {
-    const doc = await Model.findOneAndUpdate(req.params.id, req.body, {
+    const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
+
     if (!doc) {
       return next(new AppError("No document found with that id", 404));
     }
-    return res.status(201).json({ status: "success", data: { data: doc } });
+    return res.status(201).json({ status: "Updated Successfully", data: { data: doc } });
+  };
+
+export const getOneHandler =
+  (Model: any, populateOptions?: { path: string }) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    let query = Model.findById(req.params.id);
+    if (populateOptions) {
+      query = query.populate(populateOptions);
+    }
+    const doc = await query;
+
+    if (!doc) {
+      return next(new AppError("No document found with that id", 404));
+    }
+
+    return res.status(200).json({ status: "success", data: { data: doc } });
   };

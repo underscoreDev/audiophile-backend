@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import Reviews from "../models/reviews.model";
-import { deleteHandler, updateHandler } from "./handlerFactory.controller";
+import { deleteHandler, getOneHandler, updateHandler } from "./handlerFactory.controller";
 
 export const getAllReviews = async (req: Request, res: Response) => {
   let filter = {};
-  if (req.params.product_id) {
-    filter = { product: req.params.product_id };
+  if (req.params.id) {
+    filter = { product: req.params.id };
   }
   const reviews = await Reviews.find(filter);
   return res.status(200).json({ status: "success", results: reviews.length, data: { reviews } });
@@ -21,5 +21,6 @@ export const createReview = async (req: Request, res: Response) => {
   res.status(201).json({ status: "Review Added Successfully", data: { review: newReview } });
 };
 
+export const getOneReview = getOneHandler(Reviews);
 export const updateReview = updateHandler(Reviews);
 export const deleteReview = deleteHandler(Reviews);

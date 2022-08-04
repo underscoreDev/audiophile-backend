@@ -2,7 +2,14 @@ import { Router } from "express";
 import { roles } from "../interface/user.interface";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
-import { getAllUsers, updateMe, deleteMe, deleteUser } from "../controllers/user.controller";
+import { getMe, updateUser } from "../controllers/user.controller";
+import {
+  getAllUsers,
+  updateMe,
+  deleteMe,
+  deleteUser,
+  getUser,
+} from "../controllers/user.controller";
 import {
   login,
   signUp,
@@ -50,6 +57,12 @@ usersRouter
   .route("/")
   .get(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(getAllUsers));
 
-usersRouter.route("/:id").delete(deleteUser);
+usersRouter.route("/me").get(catchAsync(protect), catchAsync(getMe), catchAsync(getUser));
+
+usersRouter
+  .route("/:id")
+  .delete(catchAsync(protect), restrictTo([roles.admin]), catchAsync(deleteUser))
+  .patch(catchAsync(protect), restrictTo([roles.admin]), catchAsync(updateUser))
+  .get(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(getUser));
 
 export default usersRouter;
