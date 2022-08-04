@@ -3,7 +3,7 @@ import slugify from "slugify";
 import { Schema, model, Model } from "mongoose";
 import { ProductProps, productsCategories } from "../interface/products.interface";
 
-type ProductsModel = Model<ProductProps, {}, {}>;
+export type ProductsModel = Model<ProductProps, {}, {}>;
 
 const productSchema = new Schema<ProductProps, ProductsModel, {}>(
   {

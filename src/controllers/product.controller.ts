@@ -2,6 +2,7 @@ import Product from "../models/product.model";
 import { Request, Response, NextFunction } from "express";
 import { MongooseQueryParser } from "mongoose-query-parser";
 import { AppError } from "../middlewares/handleAppError.middleware";
+import { deleteHandler, createHandler, updateHandler } from "./handlerFactory.controller";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   const parser = new MongooseQueryParser();
@@ -53,26 +54,6 @@ export const getOneProduct = async (req: Request, res: Response, next: NextFunct
   return res.status(200).json({ status: "success", data: { product } });
 };
 
-export const createProduct = async (req: Request, res: Response) => {
-  const newProduct = await Product.create(req.body);
-  return res.status(201).json({ status: "success", data: { product: newProduct } });
-};
-
-export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
-  const product = await Product.findByIdAndUpdate(req.params.product_id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!product) {
-    return next(new AppError("No Product found with that id", 404));
-  }
-  return res.status(201).json({ status: "success", data: { product } });
-};
-
-export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
-  const product = await Product.findByIdAndDelete(req.params.product_id);
-  if (!product) {
-    return next(new AppError("No Product found with that id", 404));
-  }
-  return res.status(204).json({ status: "success", data: null });
-};
+export const createProduct = createHandler(Product);
+export const updateProduct = updateHandler(Product);
+export const deleteProduct = deleteHandler(Product);

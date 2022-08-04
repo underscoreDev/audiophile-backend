@@ -8,7 +8,7 @@ import { UserProps, UserMethods, roles } from "../interface/user.interface";
 
 const { SALT_ROUNDS } = process.env;
 
-type UserModel = Model<UserProps, {}, UserMethods>;
+export type UserModel = Model<UserProps, {}, UserMethods>;
 
 const userSchema = new Schema<UserProps, UserModel, UserMethods>(
   {

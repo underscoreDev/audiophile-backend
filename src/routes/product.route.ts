@@ -11,8 +11,12 @@ import {
   getAllProducts,
   getProductStats,
 } from "../controllers/product.controller";
+import reviewsRouter from "./review.route";
 
 const productsRouter = Router();
+
+//
+productsRouter.use("/:product_id/reviews", reviewsRouter);
 
 // Get product stats (can be used for the admin dashboard)
 productsRouter
@@ -35,7 +39,7 @@ productsRouter
 
 // GET ONE, UPDATE AND DELETE PRODUCT
 productsRouter
-  .route("/:product_id")
+  .route("/:id")
   .get(catchAsync(getOneProduct))
   //  Managers and Admins only
   .patch(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(updateProduct))
