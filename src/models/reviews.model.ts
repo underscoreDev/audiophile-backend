@@ -41,6 +41,10 @@ const reviewSchema = new Schema<ReviewProps, ReviewsModel, ReviewInstanceMethods
   { versionKey: false, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+// prevent duplicate reviews
+reviewSchema.index({ productId: 1, user: 1 }, { unique: true });
+
+// populate the user path with the firstname, lastname and photo on the review model
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
@@ -49,6 +53,7 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
+// static method to aggregate the average reviews and number of reviews
 reviewSchema.statics.calcAverageratings = async function (productId) {
   const stats = await this.aggregate([
     {
@@ -63,6 +68,7 @@ reviewSchema.statics.calcAverageratings = async function (productId) {
     },
   ]);
 
+  // update the product to reflect the calculated average review
   if (stats.length > 0) {
     await Product.findByIdAndUpdate(productId, {
       ratingsQuantity: stats[0].nRating,
@@ -76,6 +82,7 @@ reviewSchema.statics.calcAverageratings = async function (productId) {
   }
 };
 
+// call the calculated average rating func after the review is saved
 reviewSchema.post("save", function (doc) {
   doc.constructor.calcAverageratings(this.productId);
 });
