@@ -1,7 +1,11 @@
 /* eslint-disable no-new-object */
 import User from "../models/user.model";
 import { Request, Response, NextFunction } from "express";
-import { deleteHandler, updateHandler, getOneHandler } from "./handlerFactory.controller";
+import {
+  deleteHandler,
+  updateHandler,
+  getOneHandler,
+} from "../middlewares/handlerFactory.controller";
 import { AppError } from "../middlewares/handleAppError.middleware";
 
 export const getAllUsers = async (req: Request, res: Response) => {

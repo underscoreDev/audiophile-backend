@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../middlewares/handleAppError.middleware";
+import { AppError } from "./handleAppError.middleware";
 import Reviews from "../models/reviews.model";
 import Product from "../models/product.model";
 import User from "../models/user.model";

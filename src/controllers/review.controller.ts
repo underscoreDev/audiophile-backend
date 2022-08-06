@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Reviews from "../models/reviews.model";
-import { deleteHandler, getOneHandler, updateHandler } from "./handlerFactory.controller";
+import { deleteHandler, getOneHandler } from "../middlewares/handlerFactory.controller";
 
 export const getAllReviews = async (req: Request, res: Response) => {
   let filter = {};
@@ -22,5 +22,5 @@ export const createReview = async (req: Request, res: Response) => {
 };
 
 export const getOneReview = getOneHandler(Reviews);
-export const updateReview = updateHandler(Reviews);
 export const deleteReview = deleteHandler(Reviews);
+// export const updateReview = updateHandler(Reviews);

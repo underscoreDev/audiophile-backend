@@ -6,7 +6,7 @@ import {
   createHandler,
   updateHandler,
   getOneHandler,
-} from "./handlerFactory.controller";
+} from "../middlewares/handlerFactory.controller";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   const parser = new MongooseQueryParser();

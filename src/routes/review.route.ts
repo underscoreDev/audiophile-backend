@@ -4,7 +4,6 @@ import {
   getAllReviews,
   createReview,
   deleteReview,
-  updateReview,
   getOneReview,
 } from "../controllers/review.controller";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
@@ -22,8 +21,8 @@ reviewsRouter
 
 reviewsRouter
   .route("/:id")
-  .delete(restrictTo([roles.user, roles.admin]), catchAsync(deleteReview))
-  .patch(restrictTo([roles.user, roles.admin]), catchAsync(updateReview))
+  .delete(restrictTo([roles.admin]), catchAsync(deleteReview))
   .get(restrictTo([roles.manager, roles.admin]), catchAsync(getOneReview));
+// .patch(restrictTo([roles.admin]), catchAsync(updateReview))
 
 export default reviewsRouter;
