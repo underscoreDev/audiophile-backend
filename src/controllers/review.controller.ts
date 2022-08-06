@@ -12,12 +12,12 @@ export const getAllReviews = async (req: Request, res: Response) => {
 };
 
 export const createReview = async (req: Request, res: Response) => {
-  if (!req.body.product) {
-    req.body.product = req.params.product_id;
+  if (!req.body.productId) {
+    req.body.productId = req.params.product_id;
   }
-  const { review, rating, product } = req.body;
+  const { review, rating, productId } = req.body;
 
-  const newReview = await Reviews.create({ review, rating, user: req.body.user._id, product });
+  const newReview = await Reviews.create({ review, rating, user: req.body.user._id, productId });
   res.status(201).json({ status: "Review Added Successfully", data: { review: newReview } });
 };
 

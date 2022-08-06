@@ -1,7 +1,16 @@
+import { Model } from "mongoose";
+
 export interface ReviewProps {
-  review: string;
+  reviewTitle: string;
+  reviewDescription: string;
   rating: number;
   createdAt: Date;
-  product: string;
+  productId: string;
   user: string;
+}
+
+export interface ReviewInstanceMethods {}
+
+export interface ReviewsModel extends Model<ReviewProps, {}, ReviewInstanceMethods> {
+  calcAverageratings: (productId: string) => Promise<ReviewProps>;
 }

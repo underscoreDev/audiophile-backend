@@ -44,7 +44,7 @@ const productSchema = new Schema<ProductProps, ProductsModel, {}>(
 
     createdAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
       select: false,
     },
 

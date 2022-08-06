@@ -19,7 +19,7 @@ export interface ProductProps {
   productImageGallery: [string];
   ratingsAverage: number;
   ratingsQuantity: number;
-  createdAt: Date | undefined;
+  createdAt: Date;
   category: productsCategories;
   includedItems: [{ quantity: number; item: string }];
   reviews: [];
