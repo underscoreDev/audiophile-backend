@@ -3,6 +3,7 @@ import { roles } from "../interface/user.interface";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import { getMe, updateUser } from "../controllers/user.controller";
+import { logout } from "../controllers/auth.controller";
 import {
   getAllUsers,
   updateMe,
@@ -34,14 +35,17 @@ usersRouter.route("/resend-email-confirmation-code").post(catchAsync(resendEmail
 // LOGIN USER
 usersRouter.route("/login").post(catchAsync(login));
 
+// LOGOUT USER
+usersRouter.route("/logout").get(catchAsync(logout));
+
 // FORGOT PASSWORD
 usersRouter.route("/forgot-password").patch(catchAsync(forgotPassword));
 
-// RESEND FORGOT PASSWORD CODE
-usersRouter.route("/resend-forgot-password-code").patch(catchAsync(forgotPassword));
-
 // PASSWORD RESET
 usersRouter.route("/reset-password").post(catchAsync(resetPassword));
+
+// RESEND FORGOT PASSWORD CODE
+usersRouter.route("/resend-forgot-password-code").patch(catchAsync(forgotPassword));
 
 // USER UPDATING THEIR USER INFO (name, email,address)
 usersRouter.route("/update-me").patch(catchAsync(protect), catchAsync(updateMe));

@@ -9,11 +9,15 @@ import productsRouter from "./routes/product.route";
 import express, { Request, Response, Application } from "express";
 import { AppError } from "./middlewares/handleAppError.middleware";
 import { globalErrorHandler } from "./controllers/handleAppError.controller";
-
+import cookieParser from "cookie-parser";
+import morgan from "morgan";
 const app: Application = express();
 
 // Set security HTTP headers
 app.use(helmet());
+
+// logging middleware
+process.env.NODE_ENV !== "production" && app.use(morgan("dev"));
 
 // rate limiting
 const limiter = rateLimit({
@@ -25,6 +29,9 @@ app.use("/api", limiter);
 
 // Body parser
 app.use(express.json({ limit: "10kb" }));
+
+// cookie-parser
+app.use(cookieParser());
 
 // Data sanitization against NOSQL query injection
 app.use(mongoSanitize());

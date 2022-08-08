@@ -175,3 +175,8 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   await user.save();
   createSendToken(user, 200, res);
 };
+
+export const logout = async (req: Request, res: Response) => {
+  res.cookie("jwt", "", { httpOnly: true, expires: new Date(Date.now() + 10 * 1000) });
+  return res.status(200).json({ status: "Logged Out Successfully" });
+};

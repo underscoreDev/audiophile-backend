@@ -36,7 +36,7 @@ const productSchema = new Schema<ProductProps, ProductsModel, {}>(
       type: Number,
       default: 0,
       min: [1, "Review must be above 1.0"],
-      max: [1, "Review must be below 5.0"],
+      max: [5, "Review must be below 5.0"],
       set: (val: number) => Math.round(val * 10) / 10,
     },
 
