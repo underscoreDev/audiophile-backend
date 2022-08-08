@@ -14,12 +14,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const deleteMe = async (req: Request, res: Response) => {
-  await User.findByIdAndUpdate(req.body.user._id, { active: false });
+  await User.findByIdAndUpdate(req.user._id, { active: false });
   return res.status(204).json({ status: "User Deleted Successfully", data: null });
 };
 
 export const getMe = async (req: Request, res: Response, next: NextFunction) => {
-  req.params.id = req.body.user._id;
+  req.params.id = req.user._id;
   next();
 };
 
@@ -28,6 +28,7 @@ export const updateUser = updateHandler(User);
 export const deleteUser = deleteHandler(User);
 
 export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.user);
   console.log(req.file);
   console.log(req.body);
   const { password, passwordConfirm } = req.body;
@@ -38,12 +39,12 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
   }
 
   const obj = {
-    firstname: req.body.firstname ?? req.body.user.firstname,
-    lastname: req.body.lastname ?? req.body.user.lastname,
-    email: req.body.email ?? req.body.user.email,
+    firstname: req.body.firstname ?? req.user.firstname,
+    lastname: req.body.lastname ?? req.user.lastname,
+    email: req.body.email ?? req.user.email,
   };
 
-  const user = await User.findByIdAndUpdate(req.body?.user?._id, obj, {
+  const user = await User.findByIdAndUpdate(req.user?._id, obj, {
     new: true,
     runValidators: true,
   });

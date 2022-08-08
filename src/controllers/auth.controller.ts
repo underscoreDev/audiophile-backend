@@ -158,7 +158,7 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   const { oldPassword, newPassword, newPasswordConfirm } = req.body;
 
   // check if user exists
-  const user = await User.findById(req.body.user._id)
+  const user = await User.findById(req.user._id)
     .select("+password")
     .select("-role")
     .select("-passwordChangedAt");
