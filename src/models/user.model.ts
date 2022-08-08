@@ -34,7 +34,7 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
       validate: [valid.isEmail, "Please enter a valid email"],
     },
 
-    photo: String,
+    photo: { type: String, default: "default.jpg" },
 
     password: {
       type: String,
