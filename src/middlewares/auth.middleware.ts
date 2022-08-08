@@ -38,7 +38,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     return next(new AppError("User recently changed password! Please login again", 401));
   }
 
-  req.body.user = currentUser;
+  req.user = currentUser;
   next();
 };
 

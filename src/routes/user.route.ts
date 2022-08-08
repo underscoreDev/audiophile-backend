@@ -20,6 +20,9 @@ import {
   confirmEmail,
   resendEmailConfirmationToken,
 } from "../controllers/auth.controller";
+import multer from "multer";
+
+const upload = multer({ dest: "images/users" });
 
 const usersRouter = Router();
 
@@ -47,26 +50,28 @@ usersRouter.route("/reset-password").post(catchAsync(resetPassword));
 // RESEND FORGOT PASSWORD CODE
 usersRouter.route("/resend-forgot-password-code").patch(catchAsync(forgotPassword));
 
-// USER UPDATING THEIR USER INFO (name, email,address)
-usersRouter.route("/update-me").patch(catchAsync(protect), catchAsync(updateMe));
+// Protect ALL ROUTES AFTER THIS MIDDLEWARE
+usersRouter.use(catchAsync(protect));
+
+// GET ME
+usersRouter.route("/me").get(catchAsync(getMe), catchAsync(getUser));
+
+// USER UPDATING THEIR USER INFO (name, email, address)
+usersRouter.route("/update-me").patch(upload.single("photo"), catchAsync(updateMe));
 
 // USER DELETING THEIR ACCOUNT
-usersRouter.route("/delete-me").delete(catchAsync(protect), catchAsync(deleteMe));
+usersRouter.route("/delete-me").delete(catchAsync(deleteMe));
 
 // USER UPDATING THEIR PASSWORD
-usersRouter.route("/update-password").patch(catchAsync(protect), catchAsync(updatePassword));
+usersRouter.route("/update-password").patch(catchAsync(updatePassword));
 
 // GET ALL USERS
-usersRouter
-  .route("/")
-  .get(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(getAllUsers));
-
-usersRouter.route("/me").get(catchAsync(protect), catchAsync(getMe), catchAsync(getUser));
+usersRouter.route("/").get(restrictTo([roles.admin, roles.manager]), catchAsync(getAllUsers));
 
 usersRouter
   .route("/:id")
-  .delete(catchAsync(protect), restrictTo([roles.admin]), catchAsync(deleteUser))
-  .patch(catchAsync(protect), restrictTo([roles.admin]), catchAsync(updateUser))
-  .get(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(getUser));
+  .delete(restrictTo([roles.admin]), catchAsync(deleteUser))
+  .patch(restrictTo([roles.admin]), catchAsync(updateUser))
+  .get(restrictTo([roles.admin, roles.manager]), catchAsync(getUser));
 
 export default usersRouter;

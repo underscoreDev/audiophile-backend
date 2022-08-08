@@ -28,6 +28,8 @@ export const updateUser = updateHandler(User);
 export const deleteUser = deleteHandler(User);
 
 export const updateMe = async (req: Request, res: Response, next: NextFunction) => {
+  console.log(req.file);
+  console.log(req.body);
   const { password, passwordConfirm } = req.body;
   if (password || passwordConfirm) {
     return next(
@@ -41,7 +43,7 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
     email: req.body.email ?? req.body.user.email,
   };
 
-  const user = await User.findByIdAndUpdate(req.body.user._id, obj, {
+  const user = await User.findByIdAndUpdate(req.body?.user?._id, obj, {
     new: true,
     runValidators: true,
   });
