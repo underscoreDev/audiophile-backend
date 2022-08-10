@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { roles } from "../interface/user.interface";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
-import { aliasTopProducts } from "../middlewares/product.middleware";
+import {
+  aliasTopProducts,
+  uploadTourPhotos,
+  resizeTourPhotos,
+} from "../middlewares/product.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import {
   createProduct,
@@ -46,7 +50,13 @@ productsRouter
   .route("/:id")
   .get(catchAsync(getOneProduct))
   //  Managers and Admins only
-  .patch(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(updateProduct))
+  .patch(
+    catchAsync(protect),
+    restrictTo([roles.admin, roles.manager]),
+    uploadTourPhotos,
+    resizeTourPhotos,
+    catchAsync(updateProduct)
+  )
   .delete(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(deleteProduct));
 
 export default productsRouter;
