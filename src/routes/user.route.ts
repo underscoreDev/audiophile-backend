@@ -4,7 +4,7 @@ import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import { getMe, updateUser } from "../controllers/user.controller";
 import { logout } from "../controllers/auth.controller";
-import { uploadUserPhoto } from "../middlewares/user.middleware";
+import { uploadUserPhoto, resizeUserPhoto } from "../middlewares/user.middleware";
 import {
   getAllUsers,
   updateMe,
@@ -55,7 +55,9 @@ usersRouter.use(catchAsync(protect));
 usersRouter.route("/me").get(catchAsync(getMe), catchAsync(getUser));
 
 // USER UPDATING THEIR USER INFO (name, email, address)
-usersRouter.route("/update-me").patch(uploadUserPhoto, catchAsync(updateMe));
+usersRouter
+  .route("/update-me")
+  .patch(uploadUserPhoto, catchAsync(resizeUserPhoto), catchAsync(updateMe));
 
 // USER DELETING THEIR ACCOUNT
 usersRouter.route("/delete-me").delete(catchAsync(deleteMe));
