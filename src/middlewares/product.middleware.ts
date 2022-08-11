@@ -1,9 +1,9 @@
-import multer from "multer";
-import { Response, NextFunction, Request } from "express";
-import { AppError } from "./handleAppError.middleware";
 import "dotenv/config";
 import sharp from "sharp";
-import { uploadToS3, getImageUrl } from "../utils/awsS3Client.utils";
+import multer from "multer";
+import { AppError } from "./handleAppError.middleware";
+import { uploadToS3 } from "../utils/awsS3Client.utils";
+import { Response, NextFunction, Request } from "express";
 
 export const aliasTopProducts = (req: Request, _res: Response, next: NextFunction) => {
   req.query.limit = "5";
@@ -29,15 +29,17 @@ export const uploadTourPhotos = upload.fields([
 
 export const resizeAndUploadTourPhotos = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
   if (!files.image || !files.productImageGallery) {
     return next();
   }
+  console.log(files);
 
   const Key = `products/product-${req.params.id}-cover`;
+
   const ContentType = files.image[0].mimetype;
 
   const Body = await sharp(files.image[0].buffer)
@@ -46,10 +48,29 @@ export const resizeAndUploadTourPhotos = async (
     .webp({ quality: 100 })
     .toBuffer();
 
-  await uploadToS3({ Body, Key, ContentType });
+  req.body.image = await uploadToS3({ Body, Key, ContentType });
 
-  const imageUrl = await getImageUrl(Key);
+  // uploading multiple files
+  req.body.productImageGallery = [];
 
-  req.body.image = imageUrl;
+  await Promise.all(
+    files.productImageGallery.map(async (file, index) => {
+      const Key = `products/product-${req.params.id}-${index}-productImageGallery`;
+      const ContentType = file.mimetype;
+
+      // resize the image
+      const Body = await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat("webp")
+        .webp({ quality: 100 })
+        .toBuffer();
+
+      // upload to s3
+      const fileUrl = await uploadToS3({ Body, Key, ContentType });
+
+      // save url to database
+      req.body.productImageGallery.push(fileUrl);
+    })
+  );
   next();
 };
