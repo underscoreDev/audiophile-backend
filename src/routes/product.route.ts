@@ -4,7 +4,7 @@ import { protect, restrictTo } from "../middlewares/auth.middleware";
 import {
   aliasTopProducts,
   uploadTourPhotos,
-  resizeTourPhotos,
+  resizeAndUploadTourPhotos,
 } from "../middlewares/product.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import {
@@ -54,7 +54,7 @@ productsRouter
     catchAsync(protect),
     restrictTo([roles.admin, roles.manager]),
     uploadTourPhotos,
-    resizeTourPhotos,
+    catchAsync(resizeAndUploadTourPhotos),
     catchAsync(updateProduct)
   )
   .delete(catchAsync(protect), restrictTo([roles.admin, roles.manager]), catchAsync(deleteProduct));

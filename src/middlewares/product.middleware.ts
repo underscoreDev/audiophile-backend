@@ -2,7 +2,8 @@ import multer from "multer";
 import { Response, NextFunction, Request } from "express";
 import { AppError } from "./handleAppError.middleware";
 import "dotenv/config";
-import { uploadToCloudinary } from "../utils/cloudinary.util";
+import sharp from "sharp";
+import { uploadToS3, getImageUrl } from "../utils/awsS3Client.utils";
 
 export const aliasTopProducts = (req: Request, _res: Response, next: NextFunction) => {
   req.query.limit = "5";
@@ -26,18 +27,29 @@ export const uploadTourPhotos = upload.fields([
   { name: "productImageGallery", maxCount: 5 },
 ]);
 
-export const resizeTourPhotos = async (req: Request, res: Response, next: NextFunction) => {
+export const resizeAndUploadTourPhotos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-
   if (!files.image || !files.productImageGallery) {
     return next();
   }
 
-  try {
-    const uploadedImage = await uploadToCloudinary(files?.image[0].buffer);
-    req.body.image = uploadedImage?.secure_url;
-    next();
-  } catch (error) {
-    throw new AppError(`Cant upload ${error}`, 500);
-  }
+  const Key = `products/product-${req.params.id}-cover`;
+  const ContentType = files.image[0].mimetype;
+
+  const Body = await sharp(files.image[0].buffer)
+    .resize(2000, 1333)
+    .toFormat("webp")
+    .webp({ quality: 100 })
+    .toBuffer();
+
+  await uploadToS3({ Body, Key, ContentType });
+
+  const imageUrl = await getImageUrl(Key);
+
+  req.body.image = imageUrl;
+  next();
 };
