@@ -2,6 +2,7 @@ import multer from "multer";
 import { Request, NextFunction, Response } from "express";
 import { AppError } from "./handleAppError.middleware";
 import sharp from "sharp";
+import { uploadToS3 } from "../utils/awsS3Client.utils";
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req: Request, file: Express.Multer.File, cb) => {
@@ -26,18 +27,21 @@ const upload = multer({ storage: multer.memoryStorage(), fileFilter: multerFilte
 export const uploadUserPhoto = upload.single("photo");
 
 export const resizeUserPhoto = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (!req.file) {
-      return next();
-    }
-    req.file.filename = `user-${req.user._id}-${Date.now()}`;
-    await sharp(req.file.buffer)
-      .resize(500, 500)
-      .toFormat("jpeg")
-      .jpeg({ quality: 100 })
-      .toFile(`images/users/${req.file.filename}.jpeg`);
-    next();
-  } catch (error) {
-    throw new AppError(`Couldn't resize image ${error}`, 400);
+  if (!req.file) {
+    return next();
   }
+
+  const Key = `users/user-${req.user._id}`;
+
+  const ContentType = req.file.mimetype;
+
+  const Body = await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat("webp")
+    .webp({ quality: 100 })
+    .toBuffer();
+
+  req.file.filename = await uploadToS3({ Body, Key, ContentType });
+
+  next();
 };

@@ -36,7 +36,6 @@ export const resizeAndUploadTourPhotos = async (
   if (!files.image || !files.productImageGallery) {
     return next();
   }
-  console.log(files);
 
   const Key = `products/product-${req.params.id}-cover`;
 
