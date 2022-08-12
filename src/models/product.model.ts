@@ -92,7 +92,7 @@ productSchema.virtual("discount").get(function () {
 productSchema.virtual("reviews", {
   ref: "Reviews",
   foreignField: "product", // foreign key on the reviews model
-  localField: "_id", // primary key for the products model
+  localField: "id", // primary key for the products model
 });
 
 // document middleware: runs before save() and create()

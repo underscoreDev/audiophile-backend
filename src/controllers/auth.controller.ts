@@ -36,7 +36,6 @@ export const confirmEmail = async (req: Request, res: Response, next: NextFuncti
     emailVerificationTokenExpires: { $gt: Date.now() },
   })
     .select("-password")
-    .select("-role")
     .select("-passwordChangedAt");
 
   if (!user) {
@@ -47,7 +46,17 @@ export const confirmEmail = async (req: Request, res: Response, next: NextFuncti
   user.emailVerificationTokenExpires = undefined;
   await user.save({ validateBeforeSave: false });
 
-  createSendToken(user, 200, res);
+  const sendUser = {
+    id: user._id,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    email: user.email,
+    isEmailVerified: user.isEmailVerified,
+    photo: user.photo,
+    role: user.role,
+  };
+
+  createSendToken(sendUser, 200, res);
 };
 
 export const resendEmailConfirmationToken = async (
@@ -77,11 +86,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     return next(new AppError("Please provide a valid email or password", 400));
   }
   // check if user exists
-  const user = await User.findOne({ email })
-    .select("+password")
-    .select("+isEmailVerified")
-    .select("-role")
-    .select("-passwordChangedAt");
+  const user = await User.findOne({ email }).select("+password").select("-passwordChangedAt");
   // check if the password is correct
   const validPassword = await user?.comparePasswords(password, user.password);
   // return an error if anything is incorrect
@@ -91,12 +96,15 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   if (!user.isEmailVerified) {
     return next(new AppError("Please verify your email", 401));
   }
+
   const sendUser = {
-    _id: user._id,
+    id: user._id,
     firstname: user.firstname,
     lastname: user.lastname,
     email: user.email,
-    isEmailVerified: true,
+    isEmailVerified: user.isEmailVerified,
+    photo: user.photo,
+    role: user.role,
   };
   createSendToken(sendUser, 200, res);
 };
@@ -137,9 +145,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetTokenExpires: { $gt: Date.now() },
-  })
-    .select("-role")
-    .select("-passwordChangedAt");
+  }).select("-passwordChangedAt");
 
   if (!user) {
     return next(new AppError("Token expired or invalid", 400));
@@ -150,7 +156,17 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   user.passwordResetTokenExpires = undefined;
   await user.save();
 
-  createSendToken(user, 200, res);
+  const sendUser = {
+    id: user._id,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    email: user.email,
+    isEmailVerified: user.isEmailVerified,
+    photo: user.photo,
+    role: user.role,
+  };
+
+  createSendToken(sendUser, 200, res);
 };
 
 export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -158,10 +174,7 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   const { oldPassword, newPassword, newPasswordConfirm } = req.body;
 
   // check if user exists
-  const user = await User.findById(req.user._id)
-    .select("+password")
-    .select("-role")
-    .select("-passwordChangedAt");
+  const user = await User.findById(req.user.id).select("+password").select("-passwordChangedAt");
 
   // check if posted current password is correct
   const validPassword = await user?.comparePasswords(oldPassword, user.password);
@@ -173,7 +186,17 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   user.password = newPassword;
   user.passwordConfirm = newPasswordConfirm;
   await user.save();
-  createSendToken(user, 200, res);
+
+  const sendUser = {
+    id: user._id,
+    firstname: user.firstname,
+    lastname: user.lastname,
+    email: user.email,
+    isEmailVerified: user.isEmailVerified,
+    photo: user.photo,
+    role: user.role,
+  };
+  createSendToken(sendUser, 200, res);
 };
 
 export const logout = async (req: Request, res: Response) => {

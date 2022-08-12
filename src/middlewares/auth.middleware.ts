@@ -6,7 +6,6 @@ import { roles } from "../interface/user.interface";
 import User from "../models/user.model";
 import { AppError } from "./handleAppError.middleware";
 import { Request, Response, NextFunction } from "express";
-// import sendEmail from "../utils/email.util";
 import { Email } from "../utils/email.util";
 
 const { JWT_SECRET, JWT_EXPIRES_IN, NODE_ENV } = process.env;
@@ -26,6 +25,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   if (!token) {
     return next(new AppError("You are not logged in Please provide a token", 400));
   }
+
   const verify = jwt.verify(token, JWT_SECRET as string);
 
   const decoded = verify as jwt.JwtPayload;
@@ -39,7 +39,21 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
     return next(new AppError("User recently changed password! Please login again", 401));
   }
 
-  req.user = currentUser;
+  const sendUser = {
+    id: currentUser._id,
+    firstname: currentUser.firstname,
+    lastname: currentUser.lastname,
+    email: currentUser.email,
+    isEmailVerified: currentUser.isEmailVerified,
+    photo: currentUser.photo,
+    role: currentUser.role,
+  };
+
+  if (!sendUser.isEmailVerified) {
+    return next(new AppError("Email not verified, Please verify your email", 401));
+  }
+
+  req.user = sendUser;
   next();
 };
 
@@ -53,7 +67,7 @@ export const restrictTo =
   };
 
 export const createSendToken = (user: any, statusCode: number, res: Response) => {
-  const token = signJwt(user._id);
+  const token = signJwt(user.id);
 
   res.cookie("jwt", token, {
     httpOnly: true,

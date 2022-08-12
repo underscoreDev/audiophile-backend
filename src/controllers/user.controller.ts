@@ -10,16 +10,28 @@ import { AppError } from "../middlewares/handleAppError.middleware";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const users = await User.find();
-  return res.status(200).json({ status: "success", data: { users } });
+  const sendUsers = users.map((user) => {
+    return {
+      id: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      isEmailVerified: user.isEmailVerified,
+      photo: user.photo,
+      role: user.role,
+    };
+  });
+
+  return res.status(200).json({ status: "success", data: { users: sendUsers } });
 };
 
 export const deleteMe = async (req: Request, res: Response) => {
-  await User.findByIdAndUpdate(req.user._id, { active: false });
+  await User.findByIdAndUpdate(req.user.id, { active: false });
   return res.status(204).json({ status: "User Deleted Successfully", data: null });
 };
 
 export const getMe = async (req: Request, res: Response, next: NextFunction) => {
-  req.params.id = req.user._id;
+  req.params.id = req.user.id;
   next();
 };
 
@@ -42,7 +54,7 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
     photo: req.file && req.file?.filename,
   };
 
-  const user = await User.findByIdAndUpdate(req.user?._id, obj, {
+  const user = await User.findByIdAndUpdate(req.user?.id, obj, {
     new: true,
     runValidators: true,
   });

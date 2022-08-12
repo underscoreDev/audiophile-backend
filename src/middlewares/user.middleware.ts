@@ -10,7 +10,7 @@ import { uploadToS3 } from "../utils/awsS3Client.utils";
 //   },
 //   filename: (req, file, cb) => {
 //     const ext = file.mimetype.split("/")[1];
-//     cb(null, `user-${req.user._id}-${Date.now()}.${ext}`);
+//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
 //   },
 // });
 
@@ -31,7 +31,7 @@ export const resizeUserPhoto = async (req: Request, res: Response, next: NextFun
     return next();
   }
 
-  const Key = `users/user-${req.user._id}`;
+  const Key = `users/user-${req.user.id}`;
 
   const ContentType = req.file.mimetype;
 

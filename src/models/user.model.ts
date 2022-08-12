@@ -72,7 +72,6 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
     isEmailVerified: {
       type: Boolean,
       default: false,
-      select: false,
     },
 
     emailVerificationToken: String,
