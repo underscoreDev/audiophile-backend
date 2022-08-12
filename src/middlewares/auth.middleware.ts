@@ -6,7 +6,8 @@ import { roles } from "../interface/user.interface";
 import User from "../models/user.model";
 import { AppError } from "./handleAppError.middleware";
 import { Request, Response, NextFunction } from "express";
-import sendEmail from "../utils/email.util";
+// import sendEmail from "../utils/email.util";
+import { Email } from "../utils/email.util";
 
 const { JWT_SECRET, JWT_EXPIRES_IN, NODE_ENV } = process.env;
 
@@ -76,13 +77,9 @@ export const semdEmailVerificationLink = async (
     )}/api/v1/users/confirm-email/${emailToken}`;
 
     // eslint-disable-next-line max-len
-    const message = `<h3>Click this link to Confirm your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
-    await sendEmail({
-      from: "Audiophile <audiophile@audiophile.com>",
-      to: user.email,
-      subject: "Email Confirmation Code",
-      html: message,
-    });
+    const html = `<h3>Welcome to Audiophile. Your one stop online store for all your audio needs. <br/> Please Click this link to Confirm your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
+    await new Email(user, verifyUrl).send(html, "Welcome to Audiophile");
+
     return res
       .status(201)
       .json({ status: "Successful", message: "Confirmation Link sent to email" });
@@ -102,16 +99,12 @@ export const sendForgotPasswordToken = async (
 ) => {
   try {
     // eslint-disable-next-line max-len
-    const message = `<h2>${resetToken} is your password reset token.</h2><h4>Valid for 10 minutes</h4>`;
-    await sendEmail({
-      from: "Audiophile <audiophile@audiophile.com>",
-      to: user.email,
-      subject: "Password reset token",
-      html: message,
-    });
+    const html = `<h2>${resetToken} is your password reset token.</h2><h4>Valid for 10 minutes</h4>`;
+    await new Email(user).send(html, "Password Reset Token");
+
     return res
       .status(200)
-      .json({ status: "success", message: "Password Reset Token sent user's Email" });
+      .json({ status: "success", message: "Password Reset Token sent to Email" });
   } catch (error) {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
