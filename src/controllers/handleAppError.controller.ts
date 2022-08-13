@@ -7,12 +7,10 @@ const handleCastErrorDB = (err: { path: any; value: any }) => {
 };
 
 const handleDuplicateFieldsDB = (err: { errmsg: { match: (arg0: RegExp) => any[] } }) => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  console.log(value);
-
-  const message = `Duplicate field value: ${value}. Please use another value!`;
+  const message = "Email / Review Already Exist . Please use another Email!";
   return new AppError(message, 400);
 };
+
 const handleValidationErrorDB = (err: {
   errors: { [s: string]: unknown } | ArrayLike<unknown>;
 }) => {

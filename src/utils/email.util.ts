@@ -1,9 +1,18 @@
+/* eslint-disable camelcase */
 /* eslint-disable space-before-function-paren */
 /* eslint-disable require-jsdoc */
 import "dotenv/config";
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-const { EMAIL_USERNAME, EMAIL_PASSWORD, NODE_ENV } = process.env;
+const {
+  EMAIL_USERNAME,
+  EMAIL_PASSWORD,
+  NODE_ENV,
+  SENDINBLUE_SMTP_Server,
+  SENDINBLUE_Port,
+  SENDINBLUE_PASSWORD,
+  SENDINBLUE_Login,
+} = process.env;
 
 export const Email = class {
   private to: string;
@@ -20,7 +29,14 @@ export const Email = class {
 
   private readonly newTransport = (): nodemailer.Transporter<SMTPTransport.SentMessageInfo> => {
     if (NODE_ENV === "production") {
-      return nodemailer.createTransport();
+      return nodemailer.createTransport({
+        host: SENDINBLUE_SMTP_Server,
+        port: Number(SENDINBLUE_Port),
+        auth: {
+          user: SENDINBLUE_Login,
+          pass: SENDINBLUE_PASSWORD,
+        },
+      });
     } else {
       return nodemailer.createTransport({
         host: "smtp.mailtrap.io",
