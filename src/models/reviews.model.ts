@@ -1,6 +1,5 @@
 /* eslint-disable no-invalid-this */
-import { Schema, model } from "mongoose";
-import mongoose from "mongoose";
+import { Schema, model, SchemaTypes } from "mongoose";
 import { ReviewProps, ReviewInstanceMethods, ReviewsModel } from "../interface/review.interface";
 import Product from "./product.model";
 
@@ -28,12 +27,12 @@ const reviewSchema = new Schema<ReviewProps, ReviewsModel, ReviewInstanceMethods
       default: 4.5,
     },
     productId: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: SchemaTypes.ObjectId,
       ref: "Product",
       required: [true, "Review must belong to a product"],
     },
     user: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: SchemaTypes.ObjectId,
       ref: "User",
       required: [true, "Review must belong to a user"],
     },

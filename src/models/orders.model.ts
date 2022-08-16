@@ -1,6 +1,7 @@
 import { Schema, model, SchemaTypes } from "mongoose";
+import { OrderProps, OrderModel, OrderInstanceMethods } from "../interface/orders.interface";
 
-const ordersSchema = new Schema({
+const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
   ordersItems: [
     {
       product: { type: SchemaTypes.ObjectId, ref: "Product", required: true },
@@ -10,6 +11,7 @@ const ordersSchema = new Schema({
       },
     },
   ],
+
   user: {
     type: SchemaTypes.ObjectId,
     ref: "User",
@@ -18,6 +20,7 @@ const ordersSchema = new Schema({
 
   paymentMethod: { type: String, default: "card" },
   paymentStatus: { type: String, default: "pending" },
+
   shippingInfo: {
     address: { type: String, required: [true, "order must have a shipping address"], trim: true },
     city: { type: String, required: [true, "order must have a shipping city"], trim: true },
@@ -35,6 +38,6 @@ const ordersSchema = new Schema({
   deliveredAt: { type: Date },
 });
 
-const Order = model("Order", ordersSchema);
+const Order = model<OrderProps, OrderModel>("Order", ordersSchema);
 
 export default Order;
