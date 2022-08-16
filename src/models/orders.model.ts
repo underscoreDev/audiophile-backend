@@ -46,6 +46,7 @@ ordersSchema.pre(/^find/, function (next) {
   });
   next();
 });
+
 ordersSchema.pre(/^find/, function (next) {
   this.populate({
     path: "ordersItems.products",
