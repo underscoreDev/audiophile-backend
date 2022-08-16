@@ -42,3 +42,5 @@ export const getCheckoutsession = async (req: Request, res: Response, next: Next
 
   return res.status(200).json({ status: "success", session });
 };
+
+export const createOrder = async (req: Request, res: Response, next: NextFunction) => {};

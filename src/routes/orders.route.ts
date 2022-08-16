@@ -9,4 +9,5 @@ ordersRouter
   .route("/checkout-session/:productId")
   .get(catchAsync(protect), catchAsync(getCheckoutsession));
 
+ordersRouter.route("/").post(catchAsync(protect));
 export default ordersRouter;

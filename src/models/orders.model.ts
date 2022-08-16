@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 import { Schema, model, SchemaTypes } from "mongoose";
 import { OrderProps, OrderModel, OrderInstanceMethods } from "../interface/orders.interface";
 
@@ -36,6 +37,21 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
   paidAt: { type: Date, default: Date.now },
   isDelivered: { type: Boolean, default: false },
   deliveredAt: { type: Date },
+});
+
+ordersSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "user",
+    select: "firstname lastname id photo email",
+  });
+  next();
+});
+ordersSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "ordersItems.products",
+    select: "id slug name price image description",
+  });
+  next();
 });
 
 const Order = model<OrderProps, OrderModel>("Order", ordersSchema);
