@@ -1,5 +1,11 @@
+/* eslint-disable no-unused-vars */
 import { Model } from "mongoose";
 
+export enum PaymentStatus {
+  placed = "placed",
+  canceled = "canceled",
+  paid = "paid",
+}
 export interface OrderProps {
   ordersItems: [
     {
@@ -12,8 +18,6 @@ export interface OrderProps {
 
   paymentMethod: string;
 
-  paymentStatus: string;
-
   shippingInfo: {
     address: string;
     city: string;
@@ -25,8 +29,8 @@ export interface OrderProps {
   shippingFee: number;
   totalPrice: number;
   grandTotal: number;
-  isPaid: boolean;
-  paidAt: Date;
+  paymentStatus: PaymentStatus;
+  createdAt: Date;
   isDelivered: boolean;
   deliveredAt: Date;
 }

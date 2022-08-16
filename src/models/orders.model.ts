@@ -1,11 +1,21 @@
 /* eslint-disable no-invalid-this */
 import { Schema, model, SchemaTypes } from "mongoose";
-import { OrderProps, OrderModel, OrderInstanceMethods } from "../interface/orders.interface";
+import {
+  OrderProps,
+  OrderModel,
+  OrderInstanceMethods,
+  PaymentStatus,
+} from "../interface/orders.interface";
 
 const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
   ordersItems: [
     {
-      product: { type: SchemaTypes.ObjectId, ref: "Product", required: true },
+      productId: { type: SchemaTypes.ObjectId, ref: "Product", required: true },
+      slug: { type: String, required: true },
+      name: { type: String, required: true },
+      price: { type: Number, required: true },
+      image: { type: String, required: true },
+      description: { type: String },
       quantity: {
         type: Number,
         required: [true, "A orders must tell how many of a product is being bought "],
@@ -20,7 +30,6 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
   },
 
   paymentMethod: { type: String, default: "card" },
-  paymentStatus: { type: String, default: "pending" },
 
   shippingInfo: {
     address: { type: String, required: [true, "order must have a shipping address"], trim: true },
@@ -29,13 +38,24 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
     zipCode: { type: String, required: [true, "order must have a zipCode"], trim: true },
   },
 
-  tax: { type: Number, default: 0 },
+  tax: { type: Number, default: 10 },
+
   shippingFee: { type: Number, default: 10 },
+
   totalPrice: { type: Number, default: 0 },
+
   grandTotal: { type: Number, default: 0 },
-  isPaid: { type: Boolean, default: false },
-  paidAt: { type: Date, default: Date.now },
+
+  paymentStatus: {
+    type: String,
+    enum: [PaymentStatus.canceled, PaymentStatus.paid, PaymentStatus.placed],
+    default: PaymentStatus.placed,
+  },
+
+  createdAt: { type: Date, default: Date.now },
+
   isDelivered: { type: Boolean, default: false },
+
   deliveredAt: { type: Date },
 });
 
@@ -47,14 +67,16 @@ ordersSchema.pre(/^find/, function (next) {
   next();
 });
 
-ordersSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: "ordersItems.products",
-    select: "id slug name price image description",
-  });
-  next();
-});
-
 const Order = model<OrderProps, OrderModel>("Order", ordersSchema);
 
 export default Order;
+
+/*
+////////////////////////////////////////////////////////
+/////////////// ****TODO**** ///////////////////////////
+//////////////////////////////////////////////////////
+
+1. calculate total price, grand-total on orders
+
+
+*/
