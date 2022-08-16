@@ -70,13 +70,3 @@ ordersSchema.pre(/^find/, function (next) {
 const Order = model<OrderProps, OrderModel>("Order", ordersSchema);
 
 export default Order;
-
-/*
-////////////////////////////////////////////////////////
-/////////////// ****TODO**** ///////////////////////////
-//////////////////////////////////////////////////////
-
-1. calculate total price, grand-total on orders
-
-
-*/

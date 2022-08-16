@@ -3,7 +3,7 @@ import "dotenv/config";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import valid from "validator";
-import { Schema, model, Model, Query } from "mongoose";
+import { Schema, model, Model, Query, SchemaTypes } from "mongoose";
 import { UserProps, UserMethods, roles } from "../interface/user.interface";
 
 const { SALT_ROUNDS } = process.env;
@@ -69,6 +69,8 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
       select: false,
     },
 
+    favouriteProducts: [{ type: SchemaTypes.ObjectId, ref: "Product" }],
+
     isEmailVerified: {
       type: Boolean,
       default: false,
@@ -83,6 +85,11 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
   },
   { versionKey: false }
 );
+
+userSchema.pre("find", function (next) {
+  this.populate({ path: "favouriteProducts" });
+  next();
+});
 
 // Document middleware (this points to the current document)
 userSchema.pre("save", async function (next) {
@@ -147,6 +154,10 @@ userSchema.methods.createEmailVerificationToken = function () {
   this.emailVerificationToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
   this.emailVerificationTokenExpires = Date.now() + 10 * 60 * 1000;
   return verificationToken;
+};
+
+userSchema.methods.addProductToFavourites = function (productId: string) {
+  this.favouriteProducts = this.favouriteProducts.push(productId);
 };
 
 const User = model<UserProps, UserModel>("User", userSchema);

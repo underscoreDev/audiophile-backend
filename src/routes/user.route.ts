@@ -2,7 +2,7 @@ import { Router } from "express";
 import { roles } from "../interface/user.interface";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
-import { getMe, updateUser } from "../controllers/user.controller";
+import { addProductToFavourites, getMe, updateUser } from "../controllers/user.controller";
 import { logout } from "../controllers/auth.controller";
 import { uploadUserPhoto, resizeUserPhoto } from "../middlewares/user.middleware";
 import {
@@ -73,5 +73,7 @@ usersRouter
   .delete(restrictTo([roles.admin]), catchAsync(deleteUser))
   .patch(restrictTo([roles.admin]), catchAsync(updateUser))
   .get(restrictTo([roles.admin, roles.manager]), catchAsync(getUser));
+
+usersRouter.route("/favourites").post(catchAsync(protect), catchAsync(addProductToFavourites));
 
 export default usersRouter;
