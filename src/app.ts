@@ -1,7 +1,10 @@
 import hpp from "hpp";
 import helmet from "helmet";
+import morgan from "morgan";
 import xss from "xss-clean";
+import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
+import ordersRouter from "./routes/orders.route";
 import usersRouter from "./routes/user.route";
 import reviewsRouter from "./routes/review.route";
 import mongoSanitize from "express-mongo-sanitize";
@@ -9,8 +12,7 @@ import productsRouter from "./routes/product.route";
 import express, { Request, Response, Application } from "express";
 import { AppError } from "./middlewares/handleAppError.middleware";
 import { globalErrorHandler } from "./controllers/handleAppError.controller";
-import cookieParser from "cookie-parser";
-import morgan from "morgan";
+
 const app: Application = express();
 
 // Set security HTTP headers
@@ -43,6 +45,7 @@ app.use(xss());
 app.use(hpp());
 
 // API Routes
+app.use("/api/v1/orders", ordersRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/reviews", reviewsRouter);
 app.use("/api/v1/products", productsRouter);

@@ -1,0 +1,12 @@
+import { Router } from "express";
+import { protect } from "../middlewares/auth.middleware";
+import { getCheckoutsession } from "../controllers/orders.controller";
+import { catchAsync } from "../middlewares/catchAsyncError.middleware";
+
+const ordersRouter = Router();
+
+ordersRouter
+  .route("/checkout-session/:productId")
+  .get(catchAsync(protect), catchAsync(getCheckoutsession));
+
+export default ordersRouter;

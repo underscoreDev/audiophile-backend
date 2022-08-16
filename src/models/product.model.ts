@@ -9,7 +9,10 @@ const productSchema = new Schema<ProductProps, ProductsModel, {}>(
   {
     slug: String,
     new: { type: Boolean, default: true },
-    quantity: { type: Number, required: [true, "A product must tell how many of it is in stock"] },
+    quantityInstock: {
+      type: Number,
+      required: [true, "A product must tell how many of it is in stock"],
+    },
     inStock: { type: Boolean, default: true },
     name: {
       type: String,
