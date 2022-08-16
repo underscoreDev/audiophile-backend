@@ -28,5 +28,5 @@ export interface UserMethods {
   changedPasswordAfter(jwtTimeStamp: number): Boolean;
   comparePasswords(enteredP: string, encryptedP: string): Promise<Boolean>;
   createEmailVerificationToken(): string;
-  addProductToFavourites(productId: string): void;
+  AddOrRemoveFavouriteProduct(productId: string): void;
 }

@@ -69,7 +69,7 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
       select: false,
     },
 
-    favouriteProducts: [{ type: SchemaTypes.ObjectId, ref: "Product" }],
+    favouriteProducts: [{ type: SchemaTypes.ObjectId, ref: "Product", unique: true }],
 
     isEmailVerified: {
       type: Boolean,
@@ -87,7 +87,7 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
 );
 
 userSchema.pre("find", function (next) {
-  this.populate({ path: "favouriteProducts" });
+  this.populate({ path: "favouriteProducts", select: "name image price" });
   next();
 });
 
@@ -156,7 +156,12 @@ userSchema.methods.createEmailVerificationToken = function () {
   return verificationToken;
 };
 
-userSchema.methods.addProductToFavourites = function (productId: string) {
+userSchema.methods.AddOrRemoveFavouriteProduct = function (productId: string) {
+  if (this.favouriteProducts.includes(productId)) {
+    this.favouriteProducts = this.favouriteProducts.filter(
+      (product: string) => product !== productId
+    );
+  }
   this.favouriteProducts = this.favouriteProducts.push(productId);
 };
 

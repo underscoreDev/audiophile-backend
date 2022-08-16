@@ -35,7 +35,10 @@ export const getMe = async (req: Request, res: Response, next: NextFunction) => 
   next();
 };
 
-export const getUser = getOneHandler(User, { path: "favouriteProducts" });
+export const getUser = getOneHandler(User, {
+  path: "favouriteProducts",
+  select: "name image price",
+});
 export const updateUser = updateHandler(User);
 export const deleteUser = deleteHandler(User);
 
@@ -62,9 +65,10 @@ export const updateMe = async (req: Request, res: Response, next: NextFunction) 
   return res.status(200).json({ status: "User Updated successfully", data: { user } });
 };
 
-export const addProductToFavourites = async (req: Request, res: Response, next: NextFunction) => {
+export const favouriteProducts = async (req: Request, res: Response) => {
   const { productId } = req.body;
   const user = await User.findById(req.user.id);
-  user?.addProductToFavourites(productId);
+  user?.AddOrRemoveFavouriteProduct(productId);
   await user?.save({ validateBeforeSave: false });
+  return res.status(200).json({ status: "success", message: "Product added to favourites" });
 };

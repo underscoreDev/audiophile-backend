@@ -35,7 +35,7 @@ export const updateHandler =
   };
 
 export const getOneHandler =
-  (Model: any, populateOptions?: { path: string }) =>
+  (Model: any, populateOptions?: { path: string; select?: string }) =>
   async (req: Request, res: Response, next: NextFunction) => {
     let query = Model.findById(req.params.id);
     if (populateOptions) {
