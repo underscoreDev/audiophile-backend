@@ -72,3 +72,19 @@ export const favouriteProducts = async (req: Request, res: Response) => {
   await user?.save({ validateBeforeSave: false });
   return res.status(200).json({ status: "success" });
 };
+
+export const addProductTocart = async (req: Request, res: Response, next: NextFunction) => {
+  const { product, quantity } = req.body;
+  const user = await User.findById(req.user.id);
+  user?.addProductToCart({ product, quantity });
+  await user?.save({ validateBeforeSave: false });
+  return res.status(200).json({ status: "success", message: "Product added to cart" });
+};
+
+export const removeProductFromCart = async (req: Request, res: Response, next: NextFunction) => {
+  const { product } = req.body;
+  const user = await User.findById(req.user.id);
+  user?.removeProductFromCart(product);
+  await user?.save({ validateBeforeSave: false });
+  return res.status(200).json({ status: "success", message: "Product removed to cart" });
+};

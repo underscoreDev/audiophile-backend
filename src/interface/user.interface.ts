@@ -5,6 +5,11 @@ export enum roles {
   admin = "admin",
 }
 
+export interface AddToCartType {
+  product: {};
+  quantity: number;
+}
+
 export interface UserProps {
   firstname: string;
   lastname: string;
@@ -18,6 +23,7 @@ export interface UserProps {
   passwordResetTokenExpires: Date | undefined;
   active: Boolean;
   favouriteProducts: [];
+  cartProducts: [AddToCartType];
   isEmailVerified: Boolean;
   emailVerificationToken: string | undefined;
   emailVerificationTokenExpires: string | undefined;
@@ -29,4 +35,6 @@ export interface UserMethods {
   comparePasswords(enteredP: string, encryptedP: string): Promise<Boolean>;
   createEmailVerificationToken(): string;
   AddOrRemoveFavouriteProduct(productId: string): void;
+  addProductToCart({ product, quantity }: AddToCartType): void;
+  removeProductFromCart(product: string): void;
 }

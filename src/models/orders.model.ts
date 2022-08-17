@@ -8,20 +8,21 @@ import {
 } from "../interface/orders.interface";
 
 const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
-  ordersItems: [
-    {
-      productId: { type: SchemaTypes.ObjectId, ref: "Product", required: true },
-      slug: { type: String, required: true },
-      name: { type: String, required: true },
-      price: { type: Number, required: true },
-      image: { type: String, required: true },
-      description: { type: String },
-      quantity: {
-        type: Number,
-        required: [true, "A orders must tell how many of a product is being bought "],
-      },
-    },
-  ],
+  // ordersItems: [
+  //   {
+  //     productId: { type: SchemaTypes.ObjectId, ref: "Product", required: true },
+  //     slug: { type: String, required: true },
+  //     name: { type: String, required: true },
+  //     price: { type: Number, required: true },
+  //     image: { type: String, required: true },
+  //     description: { type: String },
+  //     quantity: {
+  //       type: Number,
+  //       default: 1,
+  //       required: [true, "A orders must tell how many of a product is being bought "],
+  //     },
+  //   },
+  // ],
 
   user: {
     type: SchemaTypes.ObjectId,
@@ -38,13 +39,13 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
     zipCode: { type: String, required: [true, "order must have a zipCode"], trim: true },
   },
 
-  tax: { type: Number, default: 10 },
+  // tax: { type: Number, default: 10 },
 
-  shippingFee: { type: Number, default: 10 },
+  // shippingFee: { type: Number, default: 10 },
 
-  totalPrice: { type: Number, default: 0 },
+  // totalPrice: { type: Number, default: 0 },
 
-  grandTotal: { type: Number, default: 0 },
+  // grandTotal: { type: Number, default: 0 },
 
   paymentStatus: {
     type: String,

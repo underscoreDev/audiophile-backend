@@ -4,7 +4,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import valid from "validator";
 import { Schema, model, Model, Query, SchemaTypes } from "mongoose";
-import { UserProps, UserMethods, roles } from "../interface/user.interface";
+import { UserProps, UserMethods, roles, AddToCartType } from "../interface/user.interface";
 
 const { SALT_ROUNDS } = process.env;
 
@@ -71,6 +71,14 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
 
     favouriteProducts: [{ type: SchemaTypes.ObjectId, ref: "Product", unique: true }],
 
+    cartProducts: [
+      {
+        _id: false,
+        product: { type: SchemaTypes.ObjectId, ref: "Product", unique: true },
+        quantity: { type: Number, default: 1 },
+      },
+    ],
+
     isEmailVerified: {
       type: Boolean,
       default: false,
@@ -117,6 +125,15 @@ userSchema.pre<Query<UserProps, UserModel>>(/^find/, function (next) {
   next();
 });
 
+// populate the carts product
+userSchema.pre<Query<UserProps, UserModel>>(/^find/, function (next) {
+  this.populate({
+    path: "cartProducts.product",
+    select: "slug name price image",
+  });
+  next();
+});
+
 // check if the password the user entered is the same with the password in the database
 userSchema.methods.comparePasswords = async function (
   enteredPassword: string,
@@ -151,6 +168,7 @@ userSchema.methods.createEmailVerificationToken = function () {
   return verificationToken;
 };
 
+// Adding products to favourites
 userSchema.methods.AddOrRemoveFavouriteProduct = function (productId: string) {
   const objectIds = this.favouriteProducts.map((product: string) => product.toString());
 
@@ -159,6 +177,26 @@ userSchema.methods.AddOrRemoveFavouriteProduct = function (productId: string) {
   } else {
     this.favouriteProducts = this.favouriteProducts.filter(
       (product: string) => product.toString() !== productId
+    );
+  }
+};
+
+// Adding products to Cart
+userSchema.methods.addProductToCart = function ({ product, quantity }: AddToCartType) {
+  const cartProductsIds = this.cartProducts.map((obj: any) => obj.product.id);
+
+  if (!cartProductsIds.includes(product)) {
+    this.cartProducts = this.cartProducts.push({ product, quantity });
+  }
+};
+
+// remove products from Cart
+userSchema.methods.removeProductFromCart = function (productId: string) {
+  const cartProductsIds = this.cartProducts.map((obj: any) => obj.product.id);
+
+  if (cartProductsIds.includes(productId)) {
+    this.cartProducts = this.cartProducts.filter(
+      (product: any) => product.product._id.toString() !== productId
     );
   }
 };

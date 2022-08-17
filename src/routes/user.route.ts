@@ -2,17 +2,23 @@ import { Router } from "express";
 import { roles } from "../interface/user.interface";
 import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
-import { favouriteProducts, getMe, updateUser } from "../controllers/user.controller";
-import { logout } from "../controllers/auth.controller";
 import { uploadUserPhoto, resizeUserPhoto } from "../middlewares/user.middleware";
+
 import {
   getAllUsers,
   updateMe,
   deleteMe,
   deleteUser,
   getUser,
+  favouriteProducts,
+  getMe,
+  updateUser,
+  addProductTocart,
+  removeProductFromCart,
 } from "../controllers/user.controller";
+
 import {
+  logout,
   login,
   signUp,
   resetPassword,
@@ -75,5 +81,7 @@ usersRouter
   .get(restrictTo([roles.admin, roles.manager]), catchAsync(getUser));
 
 usersRouter.route("/favourite-products").post(catchAsync(protect), catchAsync(favouriteProducts));
+usersRouter.route("/add-to-cart").post(catchAsync(protect), catchAsync(addProductTocart));
+usersRouter.route("/remove-from-cart").post(catchAsync(protect), catchAsync(removeProductFromCart));
 
 export default usersRouter;
