@@ -86,11 +86,6 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
   { versionKey: false }
 );
 
-userSchema.pre("find", function (next) {
-  this.populate({ path: "favouriteProducts", select: "name image price" });
-  next();
-});
-
 // Document middleware (this points to the current document)
 userSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified
@@ -157,12 +152,15 @@ userSchema.methods.createEmailVerificationToken = function () {
 };
 
 userSchema.methods.AddOrRemoveFavouriteProduct = function (productId: string) {
-  if (this.favouriteProducts.includes(productId)) {
+  const objectIds = this.favouriteProducts.map((product: string) => product.toString());
+
+  if (!objectIds.includes(productId)) {
+    this.favouriteProducts = this.favouriteProducts.push(productId);
+  } else {
     this.favouriteProducts = this.favouriteProducts.filter(
-      (product: string) => product !== productId
+      (product: string) => product.toString() !== productId
     );
   }
-  this.favouriteProducts = this.favouriteProducts.push(productId);
 };
 
 const User = model<UserProps, UserModel>("User", userSchema);

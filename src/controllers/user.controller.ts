@@ -37,7 +37,7 @@ export const getMe = async (req: Request, res: Response, next: NextFunction) => 
 
 export const getUser = getOneHandler(User, {
   path: "favouriteProducts",
-  select: "name image price",
+  select: "name image price slug",
 });
 export const updateUser = updateHandler(User);
 export const deleteUser = deleteHandler(User);
@@ -70,5 +70,5 @@ export const favouriteProducts = async (req: Request, res: Response) => {
   const user = await User.findById(req.user.id);
   user?.AddOrRemoveFavouriteProduct(productId);
   await user?.save({ validateBeforeSave: false });
-  return res.status(200).json({ status: "success", message: "Product added to favourites" });
+  return res.status(200).json({ status: "success" });
 };
