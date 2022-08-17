@@ -18,19 +18,11 @@ export const getAllProducts = async (req: Request, res: Response) => {
     .select(parsed.select)
     .skip(skip)
     .limit(Number(parsed.limit))
-    .select("-features")
-    .select("-slug")
-    .select("-description")
-    .select("-productImageGallery")
-    .select("-includedItems")
-    .select("-ratingsQuantity")
-    .select("-quantity");
+    .select(
+      "-features -quantity -ratingsQuantity -includedItems -productImageGallery -description"
+    );
 
-  return res.status(200).json({
-    status: "success",
-    results: products.length,
-    data: { products },
-  });
+  return res.status(200).json({ status: "success", results: products.length, data: { products } });
 };
 
 export const getProductStats = async (_req: Request, res: Response) => {
@@ -48,6 +40,14 @@ export const getProductStats = async (_req: Request, res: Response) => {
   ]);
 
   return res.status(200).json({ status: "success", data: { stats } });
+};
+
+export const getProductInACategory = async (req: Request, res: Response) => {
+  const { category } = req.params;
+  const products = await Product.find({ category }).select(
+    "-features -quantity -ratingsQuantity -includedItems -productImageGallery -description"
+  );
+  return res.status(200).json({ status: "success", results: products.length, data: { products } });
 };
 
 export const getOneProduct = getOneHandler(Product, { path: "reviews" });

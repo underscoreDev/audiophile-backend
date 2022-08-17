@@ -16,6 +16,7 @@ import {
   getProductStats,
 } from "../controllers/product.controller";
 import reviewsRouter from "./review.route";
+import { getProductInACategory } from "../controllers/product.controller";
 
 const productsRouter = Router();
 
@@ -44,6 +45,8 @@ productsRouter
     aliasTopProducts,
     catchAsync(getAllProducts)
   );
+
+productsRouter.route("/category/:category").get(catchAsync(getProductInACategory));
 
 // GET ONE, UPDATE AND DELETE PRODUCT
 productsRouter
