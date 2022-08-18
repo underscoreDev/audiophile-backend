@@ -4,8 +4,7 @@ import {
   OrderProps,
   OrderModel,
   OrderInstanceMethods,
-  OrderPaymentStatus,
-  OrderDeliveryStatus,
+  OrderStatus,
 } from "../interface/orders.interface";
 
 const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
@@ -32,18 +31,17 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
 
   orderedAt: { type: Date, default: Date.now },
 
-  orderPaymentStatus: {
+  orderStatus: {
     type: String,
-    enum: [OrderPaymentStatus.pending, OrderPaymentStatus.canceled, OrderPaymentStatus.paid],
-    default: OrderPaymentStatus.pending,
+    enum: [
+      OrderStatus.placed,
+      OrderStatus.cancelled,
+      OrderStatus.confirmed,
+      OrderStatus.shipped,
+      OrderStatus.delivered,
+    ],
+    default: OrderStatus.placed,
   },
-
-  orderDeliveryStatus: {
-    type: String,
-    enum: [OrderDeliveryStatus.pending, OrderDeliveryStatus.shipped, OrderDeliveryStatus.delivered],
-    default: OrderDeliveryStatus.pending,
-  },
-
   deliveredAt: { type: Date },
 
   shippingFee: { type: Number },
@@ -51,11 +49,25 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
   grandTotal: { type: Number },
 });
 
-// ordersSchema.pre("save", function (next) {
-//   const greg = this.ordersItems;
+ordersSchema.pre("save", function (next) {
+  const greg = this.ordersItems.reduce(
+    (acc: number, next: { quantity: number; product: { price: number } }) =>
+      (acc += next.quantity * next.product.price),
+    0
+  );
+  console.log(greg);
+  next();
+});
+
+// userSchema.methods.updateSummary = function () {
+//   console.log(this.summary.cartProducts);
+//   const greg = this.summary.cartProducts.reduce(
+//     (acc: number, next: { quantity: number; product: { price: number } }) =>
+//       (acc += next.quantity * next.product.price),
+//     0
+//   );
 //   console.log(greg);
-//   next();
-// });
+// };
 
 ordersSchema.pre(/^find/, function (next) {
   this.populate({

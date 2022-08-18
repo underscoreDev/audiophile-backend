@@ -1,27 +1,27 @@
 /* eslint-disable no-unused-vars */
 import { Model } from "mongoose";
 
-export enum OrderPaymentStatus {
-  pending = "pending",
-  canceled = "canceled",
-  paid = "paid",
-}
-
-export enum OrderDeliveryStatus {
-  pending = "pending",
+export enum OrderStatus {
+  placed = "placed",
+  cancelled = "cancelled",
+  confirmed = "confirmed",
   shipped = "shipped",
   delivered = "delivered",
 }
 
 export interface OrderProps {
-  ordersItems: [{ product: {}; quantity: number }];
+  ordersItems: [
+    {
+      product: { id: string; slug: string; name: string; price: number; image: string };
+      quantity: number;
+    }
+  ];
+
   user: string;
   shippingInfo: { address: string; city: string; country: string; zipCode: string };
 
   orderedAt: Date;
-  orderPaymentStatus: OrderPaymentStatus;
-
-  orderDeliveryStatus: OrderDeliveryStatus;
+  orderStatus: OrderStatus;
   deliveredAt: Date;
 
   shippingFee: number;
