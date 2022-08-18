@@ -4,25 +4,18 @@ import {
   OrderProps,
   OrderModel,
   OrderInstanceMethods,
-  PaymentStatus,
+  OrderPaymentStatus,
+  OrderDeliveryStatus,
 } from "../interface/orders.interface";
 
 const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
-  // ordersItems: [
-  //   {
-  //     productId: { type: SchemaTypes.ObjectId, ref: "Product", required: true },
-  //     slug: { type: String, required: true },
-  //     name: { type: String, required: true },
-  //     price: { type: Number, required: true },
-  //     image: { type: String, required: true },
-  //     description: { type: String },
-  //     quantity: {
-  //       type: Number,
-  //       default: 1,
-  //       required: [true, "A orders must tell how many of a product is being bought "],
-  //     },
-  //   },
-  // ],
+  ordersItems: [
+    {
+      _id: false,
+      product: { type: SchemaTypes.ObjectId, ref: "Product", unique: true },
+      quantity: { type: Number, default: 1 },
+    },
+  ],
 
   user: {
     type: SchemaTypes.ObjectId,
@@ -30,40 +23,53 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
     required: [true, "orders must belong to a user"],
   },
 
-  paymentMethod: { type: String, default: "card" },
-
   shippingInfo: {
     address: { type: String, required: [true, "order must have a shipping address"], trim: true },
     city: { type: String, required: [true, "order must have a shipping city"], trim: true },
     country: { type: String, required: [true, "order must have a shipping country"], trim: true },
-    zipCode: { type: String, required: [true, "order must have a zipCode"], trim: true },
+    zipCode: { type: String },
   },
 
-  // tax: { type: Number, default: 10 },
+  orderedAt: { type: Date, default: Date.now },
 
-  // shippingFee: { type: Number, default: 10 },
-
-  // totalPrice: { type: Number, default: 0 },
-
-  // grandTotal: { type: Number, default: 0 },
-
-  paymentStatus: {
+  orderPaymentStatus: {
     type: String,
-    enum: [PaymentStatus.canceled, PaymentStatus.paid, PaymentStatus.placed],
-    default: PaymentStatus.placed,
+    enum: [OrderPaymentStatus.pending, OrderPaymentStatus.canceled, OrderPaymentStatus.paid],
+    default: OrderPaymentStatus.pending,
   },
 
-  createdAt: { type: Date, default: Date.now },
-
-  isDelivered: { type: Boolean, default: false },
+  orderDeliveryStatus: {
+    type: String,
+    enum: [OrderDeliveryStatus.pending, OrderDeliveryStatus.shipped, OrderDeliveryStatus.delivered],
+    default: OrderDeliveryStatus.pending,
+  },
 
   deliveredAt: { type: Date },
+
+  shippingFee: { type: Number },
+  productsTotal: { type: Number },
+  grandTotal: { type: Number },
+});
+
+ordersSchema.pre("save", function (next) {
+  const greg = this.ordersItems;
+  console.log(greg);
+  // this.productsTotal=
+  next();
 });
 
 ordersSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
     select: "firstname lastname id photo email",
+  });
+  next();
+});
+
+ordersSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "ordersItems.product",
+    select: "slug name price image",
   });
   next();
 });
