@@ -13,8 +13,6 @@ import {
   favouriteProducts,
   getMe,
   updateUser,
-  addProductTocart,
-  removeProductFromCart,
 } from "../controllers/user.controller";
 
 import {
@@ -81,7 +79,5 @@ usersRouter
   .get(restrictTo([roles.admin, roles.manager]), catchAsync(getUser));
 
 usersRouter.route("/favourite-products").post(catchAsync(protect), catchAsync(favouriteProducts));
-usersRouter.route("/add-to-cart").post(catchAsync(protect), catchAsync(addProductTocart));
-usersRouter.route("/remove-from-cart").post(catchAsync(protect), catchAsync(removeProductFromCart));
 
 export default usersRouter;

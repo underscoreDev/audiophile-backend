@@ -35,6 +35,4 @@ export interface UserMethods {
   comparePasswords(enteredP: string, encryptedP: string): Promise<Boolean>;
   createEmailVerificationToken(): string;
   AddOrRemoveFavouriteProduct(productId: string): void;
-  addProductToCart({ product, quantity }: AddToCartType): void;
-  removeProductFromCart(product: string): void;
 }

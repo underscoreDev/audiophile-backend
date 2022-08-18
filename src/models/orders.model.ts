@@ -51,12 +51,11 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>({
   grandTotal: { type: Number },
 });
 
-ordersSchema.pre("save", function (next) {
-  const greg = this.ordersItems;
-  console.log(greg);
-  // this.productsTotal=
-  next();
-});
+// ordersSchema.pre("save", function (next) {
+//   const greg = this.ordersItems;
+//   console.log(greg);
+//   next();
+// });
 
 ordersSchema.pre(/^find/, function (next) {
   this.populate({
