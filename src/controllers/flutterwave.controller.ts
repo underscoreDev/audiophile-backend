@@ -1,14 +1,19 @@
 /* eslint-disable max-len */
 import "dotenv/config";
 import axios from "axios";
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import Order from "../models/orders.model";
 import { Email } from "../utils/email.util";
 import { OrderStatus } from "../interface/orders.interface";
+import { AppError } from "../middlewares/handleAppError.middleware";
 
-export const getCheckoutsession = async (req: Request, res: Response) => {
+export const getCheckoutsession = async (req: Request, res: Response, next: NextFunction) => {
   const { orderItems, shippingInfo } = req.body;
   const user = req.user;
+  if (!orderItems || !shippingInfo || orderItems?.length < 1) {
+    return next(new AppError("Order must have either a shipping info or order items", 400));
+  }
+
   const order = await Order.create({ orderItems, shippingInfo, user: user.id });
 
   const { data } = await axios({
@@ -40,20 +45,6 @@ export const getCheckoutsession = async (req: Request, res: Response) => {
   });
   return res.status(200).json(data);
 };
-
-// export const createOrder = async (req: Request, res: Response) => {
-//   const { orderItems, shippingInfo } = req.body;
-//   const { id } = req.user;
-//   const order = await Order.create({ orderItems, shippingInfo, user: id });
-//   return res.status(201).json({ status: "Order Created Successfully", data: { order } });
-// };
-
-export const getUserOrder = async (req: Request, res: Response) => {
-  const order = await Order.find({ user: req.user.id });
-  return res.status(200).json({ status: "success", data: { order } });
-};
-
-// In an Express-like app:
 
 export const flwWebhook = async (req: Request, res: Response) => {
   // If you specified a secret hash, check for the signature
