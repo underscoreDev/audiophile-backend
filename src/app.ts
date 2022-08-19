@@ -23,7 +23,7 @@ app.use(helmet());
 
 // USE CORS
 app.use(cors());
-app.options("*", cors());
+// app.options("*", cors());
 
 // logging middleware
 process.env.NODE_ENV !== "production" && app.use(morgan("dev"));
