@@ -12,6 +12,7 @@ import productsRouter from "./routes/product.route";
 import express, { Request, Response, Application } from "express";
 import { AppError } from "./middlewares/handleAppError.middleware";
 import { globalErrorHandler } from "./controllers/handleAppError.controller";
+import { flwWebhook } from "./controllers/flutterwave.controller";
 
 const app: Application = express();
 
@@ -43,6 +44,8 @@ app.use(xss());
 
 // prevent parameter pollution
 app.use(hpp());
+
+app.post("/flw-checkout", express.raw({ type: "application/json" }), flwWebhook);
 
 // API Routes
 app.use("/api/v1/orders", ordersRouter);

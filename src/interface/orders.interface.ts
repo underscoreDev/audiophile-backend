@@ -17,7 +17,7 @@ export interface OrderProps {
     }
   ];
 
-  user: string;
+  user: { firstname: string; lastname: string; id: string; photo: string; email: string };
   shippingInfo: { address: string; city: string; country: string; zipCode: string };
 
   orderedAt: Date;
