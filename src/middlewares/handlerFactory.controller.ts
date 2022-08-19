@@ -4,9 +4,10 @@ import { AppError } from "./handleAppError.middleware";
 import Reviews from "../models/reviews.model";
 import Product from "../models/product.model";
 import User from "../models/user.model";
+import Order from "../models/orders.model";
 
 export const deleteHandler =
-  (Model: typeof Reviews | typeof Product | typeof User) =>
+  (Model: typeof Reviews | typeof Product | typeof User | typeof Order) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
     if (!doc) {
