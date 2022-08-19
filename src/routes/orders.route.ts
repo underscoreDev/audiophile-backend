@@ -5,9 +5,7 @@ import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 
 const ordersRouter = Router();
 
-ordersRouter
-  .route("/checkout-session/:productId")
-  .get(catchAsync(protect), catchAsync(getCheckoutsession));
+ordersRouter.route("/checkout-session").post(catchAsync(protect), catchAsync(getCheckoutsession));
 
 ordersRouter.route("/").post(catchAsync(protect), catchAsync(createOrder));
 
