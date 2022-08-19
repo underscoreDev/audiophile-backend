@@ -10,7 +10,7 @@ export enum OrderStatus {
 }
 
 export interface OrderProps {
-  ordersItems: [
+  orderItems: [
     {
       product: { id: string; slug: string; name: string; price: number; image: string };
       quantity: number;
@@ -29,7 +29,9 @@ export interface OrderProps {
   grandTotal: number;
 }
 
-export interface OrderInstanceMethods {}
+export interface OrderInstanceMethods {
+  updateSummary(): void;
+}
 
 export interface OrderModel extends Model<OrderProps, {}, OrderInstanceMethods> {
   calcOrderItemsTotal: (productId: string) => Promise<OrderProps>;
