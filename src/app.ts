@@ -13,6 +13,7 @@ import express, { Request, Response, Application } from "express";
 import { AppError } from "./middlewares/handleAppError.middleware";
 import { globalErrorHandler } from "./controllers/handleAppError.controller";
 import { flwWebhook } from "./controllers/flutterwave.controller";
+import compression from "compression";
 
 const app: Application = express();
 
@@ -44,6 +45,10 @@ app.use(xss());
 
 // prevent parameter pollution
 app.use(hpp());
+
+// COMPRESSION
+
+app.use(compression());
 
 app.post("/flw-checkout", express.raw({ type: "application/json" }), flwWebhook);
 
