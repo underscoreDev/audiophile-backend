@@ -14,11 +14,16 @@ import { AppError } from "./middlewares/handleAppError.middleware";
 import { globalErrorHandler } from "./controllers/handleAppError.controller";
 import { flwWebhook } from "./controllers/flutterwave.controller";
 import compression from "compression";
+import cors from "cors";
 
 const app: Application = express();
 
 // Set security HTTP headers
 app.use(helmet());
+
+// USE CORS
+app.use(cors());
+app.options("*", cors());
 
 // logging middleware
 process.env.NODE_ENV !== "production" && app.use(morgan("dev"));
