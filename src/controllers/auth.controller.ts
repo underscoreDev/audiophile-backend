@@ -12,10 +12,11 @@ import {
 import { AppError } from "../middlewares/handleAppError.middleware";
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
-  const { firstname, lastname, email, password, passwordConfirm, photo }: UserProps = req.body;
+  const { firstname, lastname, email, password, passwordConfirm, phoneNumber }: UserProps =
+    req.body;
   // create user
   const user = await User.create({
-    photo,
+    phoneNumber,
     email,
     password,
     lastname,
@@ -41,6 +42,7 @@ export const confirmEmail = async (req: Request, res: Response, next: NextFuncti
   if (!user) {
     return next(new AppError("Token expired or invalid", 400));
   }
+
   user.isEmailVerified = true;
   user.emailVerificationToken = undefined;
   user.emailVerificationTokenExpires = undefined;
@@ -53,6 +55,7 @@ export const confirmEmail = async (req: Request, res: Response, next: NextFuncti
     email: user.email,
     isEmailVerified: user.isEmailVerified,
     photo: user.photo,
+    phoneNumber: user.phoneNumber,
     role: user.role,
   };
 
@@ -104,6 +107,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     email: user.email,
     isEmailVerified: user.isEmailVerified,
     photo: user.photo,
+    phoneNumber: user.phoneNumber,
     role: user.role,
   };
   createSendToken(sendUser, 200, res);
@@ -163,6 +167,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     email: user.email,
     isEmailVerified: user.isEmailVerified,
     photo: user.photo,
+    phoneNumber: user.phoneNumber,
     role: user.role,
   };
 
@@ -194,6 +199,7 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
     email: user.email,
     isEmailVerified: user.isEmailVerified,
     photo: user.photo,
+    phoneNumber: user.phoneNumber,
     role: user.role,
   };
   createSendToken(sendUser, 200, res);

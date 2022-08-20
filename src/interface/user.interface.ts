@@ -15,6 +15,7 @@ export interface UserProps {
   lastname: string;
   email: string;
   photo: string;
+  phoneNumber: string;
   password: string;
   passwordConfirm: string | undefined;
   passwordChangedAt: Date | number;
@@ -23,7 +24,6 @@ export interface UserProps {
   passwordResetTokenExpires: Date | undefined;
   active: Boolean;
   favouriteProducts: [];
-  cartProducts: [AddToCartType];
   isEmailVerified: Boolean;
   emailVerificationToken: string | undefined;
   emailVerificationTokenExpires: string | undefined;

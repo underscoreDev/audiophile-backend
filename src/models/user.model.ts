@@ -26,6 +26,13 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
       required: [true, "Please enter your Last name"],
     },
 
+    phoneNumber: {
+      type: String,
+      minlength: 8,
+      maxlength: 14,
+      required: [true, "Please enter your Phone Number"],
+    },
+
     email: {
       type: String,
       unique: true,
