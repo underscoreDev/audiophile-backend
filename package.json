@@ -4,13 +4,13 @@
   "description": "Audiophile e-commerce website Backend",
   "main": "build/server.js",
   "scripts": {
-    "start": "node build/server.js",
-    "test": "jasmine-ts",
-    "lint": "eslint . --ext .ts",
-    "prettier": "prettier --config .prettierrc \"./**/*.ts\" --write",
-    "dev": "tsc-watch --noClear -p tsconfig.json --onSuccess \"node ./build/server.js\"",
     "install": "npm install",
-    "build": "tsc --build"
+    "lint": "eslint . --ext .ts",
+    "build": "tsc --build",
+    "start": "node build/server.js",
+    "test": "jasmine",
+    "prettier": "prettier --config .prettierrc \"./**/*.ts\" --write",
+    "dev": "tsc-watch --noClear -p tsconfig.json --onSuccess \"node ./build/server.js\""
   },
   "keywords": [
     "NodeJs",
