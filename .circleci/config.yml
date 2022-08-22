@@ -16,10 +16,10 @@ jobs:
           name: Install node Packages
           command: |
             npm run backend:install
-      - run:
-          name: Lint code
-          command: |
-            npm run backend:lint
+      # - run:
+      #     name: Lint code
+      #     command: |
+      #       npm run backend:lint
       - run:
           name: Build Code
           command: |
