@@ -1,7 +1,7 @@
 import "dotenv/config";
 import app from "./app";
 import mongoose from "mongoose";
-const { PORT, HOST, DATABASE_LOCAL } = process.env;
+const { PORT, HOST, DATABASE_LOCAL, DATABASE_HOSTED, NODE_ENV } = process.env;
 
 process.on("uncaughtException", (err) => {
   console.log("****** UNCAUGHT EXCEPTION 🔥🔥🔥 SHUTTING DOWN *****");
@@ -11,7 +11,9 @@ process.on("uncaughtException", (err) => {
 
 const dbConnect = async () => {
   try {
-    await mongoose.connect(DATABASE_LOCAL as string);
+    await mongoose.connect(
+      NODE_ENV === "production" ? (DATABASE_HOSTED as string) : (DATABASE_LOCAL as string)
+    );
     console.log("************DATABASE CONNECTED************");
   } catch (error) {
     throw new Error(`Cannot connect to database ${error}`);
