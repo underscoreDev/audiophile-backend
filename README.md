@@ -9,4 +9,5 @@ NodeJs
 MongoDb
 Mongoose
 jwt
+Sharp (for Image Processing)
 AWS SDK
