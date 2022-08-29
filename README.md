@@ -9,3 +9,4 @@ NodeJs
 MongoDb
 Mongoose
 jwt
+AWS SDK
