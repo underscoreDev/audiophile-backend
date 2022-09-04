@@ -2,28 +2,27 @@ import { Router } from "express";
 import { frontendVerifyCookie } from "../middlewares/auth.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import {
-  confirmEmail,
-  signUp,
-  resendEmailConfirmationToken,
   login,
   logout,
-  forgotPassword,
+  signUp,
+  confirmEmail,
   resetPassword,
+  forgotPassword,
+  resendEmailConfirmationToken,
 } from "./../controllers/auth.controller";
 
 const authRouter = Router();
 
 // VERIFY COOKIE FROM THE FRONTEND
-
 authRouter.route("/verify-cookie").get(catchAsync(frontendVerifyCookie));
 
-// REGISTER USER
-authRouter.route("/register").post(catchAsync(signUp));
+// SIGNUP USER
+authRouter.route("/signup").post(catchAsync(signUp));
 
 // CONFIRM EMAIL
 authRouter.route("/confirm-email/:confirm_token").get(catchAsync(confirmEmail));
 
-// RESEND CONFIRMATION CODE
+// RESEND EMAIL CONFIRMATION CODE
 authRouter.route("/resend-email-confirmation-code").post(catchAsync(resendEmailConfirmationToken));
 
 // LOGIN USER

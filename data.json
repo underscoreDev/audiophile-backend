@@ -34,9 +34,9 @@
       "/images/product-yx1-earphones/desktop/image-gallery-2.jpg",
       "/images/product-yx1-earphones/desktop/image-gallery-3.jpg"
     ],
-    "ratingsAverage": 3.4,
+    "ratingsAverage": 0,
     "ratingsQuantity": 0,
-    "quantity": 10
+    "quantityInStock": 10
   },
 
   {
@@ -70,9 +70,9 @@
       "/images/product-xx99-mark-one-headphones/desktop/image-gallery-2.jpg",
       "/images/product-xx99-mark-one-headphones/desktop/image-gallery-3.jpg"
     ],
-    "ratingsAverage": 4.0,
+    "ratingsAverage": 0,
     "ratingsQuantity": 0,
-    "quantity": 15
+    "quantityInStock": 15
   },
 
   {
@@ -106,9 +106,9 @@
       "/images/product-xx59-headphones/mobile/image-gallery-2.jpg",
       "/images/product-xx59-headphones/mobile/image-gallery-3.jpg"
     ],
-    "ratingsAverage": 2.0,
+    "ratingsAverage": 0,
     "ratingsQuantity": 0,
-    "quantity": 23
+    "quantityInStock": 23
   },
 
   {
@@ -146,9 +146,9 @@
       "/images/product-xx99-mark-two-headphones/mobile/image-gallery-2.jpg",
       "/images/product-xx99-mark-two-headphones/mobile/image-gallery-3.jpg"
     ],
-    "ratingsAverage": 1.5,
+    "ratingsAverage": 0,
     "ratingsQuantity": 0,
-    "quantity": 8
+    "quantityInStock": 8
   },
 
   {
@@ -186,9 +186,9 @@
       "/images/product-zx7-speaker/mobile/image-gallery-2.jpg",
       "/images/product-zx7-speaker/mobile/image-gallery-3.jpg"
     ],
-    "ratingsAverage": 4.5,
+    "ratingsAverage": 0,
     "ratingsQuantity": 0,
-    "quantity": 16
+    "quantityInStock": 16
   },
 
   {
@@ -226,8 +226,8 @@
       "/images/product-zx9-speaker/desktop/image-gallery-2.jpg",
       "/images/product-zx9-speaker/desktop/image-gallery-3.jpg"
     ],
-    "ratingsAverage": 3.9,
+    "ratingsAverage": 0,
     "ratingsQuantity": 0,
-    "quantity": 12
+    "quantityInStock": 12
   }
 ]

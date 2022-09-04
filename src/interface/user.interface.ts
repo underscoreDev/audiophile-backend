@@ -1,13 +1,7 @@
-/* eslint-disable no-unused-vars */
 export enum roles {
   user = "user",
   manager = "manager",
   admin = "admin",
-}
-
-export interface AddToCartType {
-  product: {};
-  quantity: number;
 }
 
 export interface UserProps {
