@@ -57,6 +57,50 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
+export const frontendVerifyCookie = async (req: Request, res: Response, next: NextFunction) => {
+  let token;
+
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    token = req.headers.authorization?.split(" ")[1];
+  } else if (req.cookies?.jwt) {
+    token = req.cookies.jwt;
+  }
+  console.log(token);
+
+  if (!token) {
+    return next(new AppError("You are not logged in Please provide a token", 403));
+  }
+
+  const verify = jwt.verify(token, JWT_SECRET as string);
+
+  const decoded = verify as jwt.JwtPayload;
+  const currentUser = await User.findById(decoded.id);
+
+  if (!currentUser) {
+    return next(new AppError("The user belonging to this token doesn't exist", 401));
+  }
+
+  if (currentUser.changedPasswordAfter(decoded?.iat ?? 0)) {
+    return next(new AppError("User recently changed password! Please login again", 401));
+  }
+
+  const sendUser = {
+    id: currentUser._id,
+    firstname: currentUser.firstname,
+    lastname: currentUser.lastname,
+    email: currentUser.email,
+    isEmailVerified: currentUser.isEmailVerified,
+    photo: currentUser.photo,
+    role: currentUser.role,
+  };
+
+  if (!sendUser.isEmailVerified) {
+    return next(new AppError("Email not verified, Please verify your email", 401));
+  }
+
+  return res.status(200).json({ status: "Success", token, data: sendUser });
+};
+
 export const restrictTo =
   ([...userRoles]: roles[]) =>
   (req: Request, res: Response, next: NextFunction) => {
@@ -70,7 +114,7 @@ export const createSendToken = (user: any, statusCode: number, res: Response) =>
   const token = signJwt(user.id);
 
   res.cookie("jwt", token, {
-    httpOnly: true,
+    httpOnly: NODE_ENV === "production" ? true : false,
     secure: NODE_ENV === "production" ? true : false,
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
   });

@@ -7,6 +7,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import usersRouter from "./routes/user.route";
+import authRouter from "./routes/auth.route";
 import ordersRouter from "./routes/orders.route";
 import reviewsRouter from "./routes/review.route";
 import mongoSanitize from "express-mongo-sanitize";
@@ -19,11 +20,11 @@ import { globalErrorHandler } from "./controllers/handleAppError.controller";
 const app: Application = express();
 
 // USE CORS
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.options("*", cors);
 
 // Set security HTTP headers
-app.use(helmet());
+// app.use(helmet());
 
 // logging middleware
 process.env.NODE_ENV !== "production" && app.use(morgan("dev"));
@@ -57,7 +58,13 @@ app.use(compression());
 // FLUTTERWAVE WEBHOOK
 app.post("/flw-checkout", express.raw({ type: "application/json" }), flwWebhook);
 
+// app.use((req, res, next) => {
+//   console.log(req.cookies);
+//   next();
+// });
+
 // API Routes
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/orders", ordersRouter);
 app.use("/api/v1/reviews", reviewsRouter);

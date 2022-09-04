@@ -15,42 +15,9 @@ import {
   updateUser,
 } from "../controllers/user.controller";
 
-import {
-  logout,
-  login,
-  signUp,
-  resetPassword,
-  forgotPassword,
-  updatePassword,
-  confirmEmail,
-  resendEmailConfirmationToken,
-} from "../controllers/auth.controller";
+import { updatePassword } from "../controllers/auth.controller";
 
 const usersRouter = Router();
-
-// REGISTER USER
-usersRouter.route("/register").post(catchAsync(signUp));
-
-// CONFIRM EMAIL
-usersRouter.route("/confirm-email/:confirm_token").get(catchAsync(confirmEmail));
-
-// RESEND CONFIRMATION CODE
-usersRouter.route("/resend-email-confirmation-code").post(catchAsync(resendEmailConfirmationToken));
-
-// LOGIN USER
-usersRouter.route("/login").post(catchAsync(login));
-
-// LOGOUT USER
-usersRouter.route("/logout").get(catchAsync(logout));
-
-// FORGOT PASSWORD
-usersRouter.route("/forgot-password").patch(catchAsync(forgotPassword));
-
-// PASSWORD RESET
-usersRouter.route("/reset-password").post(catchAsync(resetPassword));
-
-// RESEND FORGOT PASSWORD CODE
-usersRouter.route("/resend-forgot-password-code").patch(catchAsync(forgotPassword));
 
 // Protect ALL ROUTES AFTER THIS MIDDLEWARE
 usersRouter.use(catchAsync(protect));
