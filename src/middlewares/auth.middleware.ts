@@ -132,7 +132,7 @@ export const semdEmailVerificationLink = async (
   try {
     const verifyUrl = `${req.protocol}://${req.get(
       "host"
-    )}/api/v1/users/confirm-email/${emailToken}`;
+    )}/api/v1/auth/confirm-email/${emailToken}`;
 
     // eslint-disable-next-line max-len
     const html = `<h3>Welcome to Audiophile. Your one stop online store for all your audio needs. <br/> Please Click this link to Confirm your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
