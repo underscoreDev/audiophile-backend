@@ -58,11 +58,6 @@ app.use(compression());
 // FLUTTERWAVE WEBHOOK
 app.post("/flw-checkout", express.raw({ type: "application/json" }), flwWebhook);
 
-// app.use((req, res, next) => {
-//   console.log(req.cookies);
-//   next();
-// });
-
 // API Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
@@ -70,6 +65,9 @@ app.use("/api/v1/orders", ordersRouter);
 app.use("/api/v1/reviews", reviewsRouter);
 app.use("/api/v1/products", productsRouter);
 app.get("/api/v1", (_req: Request, res: Response) =>
+  res.status(200).json({ message: "success", data: "Welcome to Audioplile Backend server" })
+);
+app.get("/", (_req: Request, res: Response) =>
   res.status(200).json({ message: "success", data: "Welcome to Audioplile Backend server" })
 );
 
