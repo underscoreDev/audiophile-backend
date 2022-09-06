@@ -7,6 +7,7 @@
     "backend:install": "npm install",
     "backend:lint": "eslint . --ext .ts",
     "backend:build": "tsc --build",
+    "backend:build2": "rm -rf build && tsc --build && cp -rf package.json build/",
     "backend:start": "node build/server.js",
     "backend:test": "jasmine",
     "prettier": "prettier --config .prettierrc \"./**/*.ts\" --write",

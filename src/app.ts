@@ -24,7 +24,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.options("*", cors);
 
 // Set security HTTP headers
-// app.use(helmet());
+app.use(helmet());
 
 // logging middleware
 process.env.NODE_ENV !== "production" && app.use(morgan("dev"));
