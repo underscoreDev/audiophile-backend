@@ -4,7 +4,7 @@
   "description": "Audiophile e-commerce website Backend",
   "main": "build/server.js",
   "scripts": {
-    "zip": "yarn build &&  tar -caf audiophile.zip build",
+    "zip": "yarn build &&  tar -caf ./build/audiophile.zip build",
     "build": "rm -rf build && tsc --build && cp -rf package.json build/",
     "start": "node server.js",
     "install": "npm install",
