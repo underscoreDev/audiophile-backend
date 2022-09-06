@@ -1,13 +1,15 @@
 import "dotenv/config";
 import app from "./app";
 import mongoose from "mongoose";
-const { PORT, HOST, DATABASE_LOCAL, DATABASE_HOSTED, NODE_ENV } = process.env;
+const { HOST, DATABASE_LOCAL, DATABASE_HOSTED, NODE_ENV } = process.env;
 
 process.on("uncaughtException", (err) => {
   console.log("****** UNCAUGHT EXCEPTION 🔥🔥🔥 SHUTTING DOWN *****");
   console.log(err.name, err.message);
   process.exit(1);
 });
+
+const port = process.env.port || 9898;
 
 const dbConnect = async () => {
   try {
@@ -20,9 +22,9 @@ const dbConnect = async () => {
   }
 };
 
-const server = app.listen(PORT, async () => {
+const server = app.listen(port, async () => {
   await dbConnect();
-  console.log(`Server started on http://${HOST}:${PORT}`);
+  console.log(`Server started on http://${HOST}:${port}`);
 });
 
 process.on("unhandledRejection", (err: any) => {
