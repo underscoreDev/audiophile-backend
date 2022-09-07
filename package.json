@@ -4,8 +4,8 @@
   "description": "Audiophile e-commerce website Backend",
   "main": "server.js",
   "scripts": {
-    "zip": " yarn build && zip -r audiophile.zip build",
-    "build": "rm -rf build && tsc --build && cp -rf package.json build/",
+    "zip": "yarn build && cd build/ && zip -r audiophile.zip ./",
+    "build": "rm -rf build && tsc --build && cp -rf package.json build/ && cp -rf .npmrc build/ && cd build/ && zip -r audiophile.zip ./",
     "start": "node server.js",
     "install": "npm install",
     "backend:install": "npm install",
@@ -25,7 +25,7 @@
   "author": "underscoreDev",
   "license": "ISC",
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
+    "@types/bcryptjs": "^2.4.2",
     "@types/compression": "^1.7.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.12",
@@ -58,7 +58,7 @@
   "dependencies": {
     "aws-sdk": "^2.1193.0",
     "axios": "^0.27.2",
-    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

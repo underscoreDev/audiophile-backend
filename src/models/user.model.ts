@@ -1,7 +1,7 @@
 /* eslint-disable no-invalid-this */
 import "dotenv/config";
 import crypto from "crypto";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import valid from "validator";
 import { Schema, model, Model, Query, SchemaTypes } from "mongoose";
 import { UserProps, UserMethods, roles } from "../interface/user.interface";
