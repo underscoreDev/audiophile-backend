@@ -29,7 +29,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 export const confirmEmail = async (req: Request, res: Response, next: NextFunction) => {
-  const confirmationCode = req.params.confirm_token;
+  const confirmationCode = req.params.verify_token;
   const hashedToken = crypto.createHash("sha256").update(confirmationCode).digest("hex");
 
   const user = await User.findOne({
