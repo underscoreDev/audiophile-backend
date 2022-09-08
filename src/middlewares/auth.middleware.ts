@@ -117,6 +117,7 @@ export const createSendToken = (user: any, statusCode: number, res: Response) =>
     httpOnly: NODE_ENV === "production" ? true : false,
     secure: NODE_ENV === "production" ? true : false,
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    sameSite: "none",
   });
 
   // send to client
