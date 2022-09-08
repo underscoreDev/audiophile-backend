@@ -6,7 +6,6 @@
   "scripts": {
     "aws:build": "rm -rf dist && tsc --build && cp -rf package.json dist/ && cp -rf .npmrc dist/ && cp -rf .ebextensions/ dist/ && cp -rf .elasticbeanstalk/ dist/ && cd dist/ && zip -r audiophile.zip ./",
     "start": "node dist/server.js",
-    "install": "npm install",
     "prettier": "prettier --config .prettierrc \"./**/*.ts\" --write",
     "dev": "tsc-watch --noClear -p tsconfig.json --onSuccess \"node ./dist/server.js\"",
     "postinstall": "tsc"
