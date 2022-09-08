@@ -9,7 +9,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-const port = process.env.port || 9898;
+const port = process.env.PORT || 9898;
 
 const dbConnect = async () => {
   try {
