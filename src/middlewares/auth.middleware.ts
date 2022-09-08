@@ -130,22 +130,22 @@ export const semdEmailVerificationLink = async (
   { user, emailToken }: any
 ) => {
   try {
-    const verifyUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/auth/confirm-email/${emailToken}`;
+    // const verifyUrl = `${req.protocol}://${req.get(
+    //   "host"
+    // )}/api/v1/auth/confirm-email/${emailToken}`;
 
     // eslint-disable-next-line max-len
-    const html = `<h3>Welcome to Audiophile. Your one stop online store for all your audio needs. <br/> Please Click this link to Confirm your email</h3><a href=${verifyUrl} target="_blank">Confirm Email</a> <h4>Confirmation code is Valid for 10 minutes</h4>`;
-    await new Email(user, verifyUrl).send(html, "Welcome to Audiophile");
+    const html = `<h3>Welcome to Audiophile. Your one stop online store for all your audio needs. <br/> ${emailToken} is your Email Verification Code</h3><h4>Verification code is Valid for 10 minutes</h4>`;
+    await new Email(user).send(html, "Welcome to Audiophile");
 
     return res
       .status(201)
-      .json({ status: "Successful", message: "Confirmation Link sent to email" });
+      .json({ status: "Successful", message: "Verification Code sent to Email" });
   } catch (error) {
     user.emailVerificationToken = undefined;
     user.emailVerificationTokenExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(new AppError(`There was an error sending the Confirmation Link ${error}`, 500));
+    return next(new AppError(`There was an error sending the Verification Code ${error}`, 500));
   }
 };
 

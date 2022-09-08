@@ -152,7 +152,7 @@ userSchema.methods.createPasswordResetToken = function () {
 };
 
 userSchema.methods.createEmailVerificationToken = function () {
-  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const verificationToken = crypto.randomBytes(3).toString("hex");
   this.emailVerificationToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
   this.emailVerificationTokenExpires = Date.now() + 10 * 60 * 1000;
   return verificationToken;
