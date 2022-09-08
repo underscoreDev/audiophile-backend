@@ -20,7 +20,7 @@ authRouter.route("/verify-cookie").get(catchAsync(frontendVerifyCookie));
 authRouter.route("/signup").post(catchAsync(signUp));
 
 // CONFIRM EMAIL
-authRouter.route("/confirm-email/:verify_token").post(catchAsync(confirmEmail));
+authRouter.route("/verify-email/:verify_token").post(catchAsync(confirmEmail));
 
 // RESEND EMAIL CONFIRMATION CODE
 authRouter.route("/resend-email-confirmation-code").post(catchAsync(resendEmailConfirmationToken));
