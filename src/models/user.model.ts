@@ -76,7 +76,7 @@ const userSchema = new Schema<UserProps, UserModel, UserMethods>(
       select: false,
     },
 
-    favouriteProducts: [{ type: SchemaTypes.ObjectId, ref: "Product", unique: true }],
+    favouriteProducts: [{ type: SchemaTypes.ObjectId, ref: "Product" }],
 
     isEmailVerified: {
       type: Boolean,

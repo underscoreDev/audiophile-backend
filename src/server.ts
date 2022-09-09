@@ -13,10 +13,10 @@ const port = process.env.PORT || 9898;
 
 const dbConnect = async () => {
   try {
-    await mongoose.connect(DATABASE_HOSTED as string);
-    // await mongoose.connect(
-    //   NODE_ENV === "production" ? (DATABASE_HOSTED as string) : (DATABASE_LOCAL as string)
-    // );
+    // await mongoose.connect(DATABASE_HOSTED as string);
+    await mongoose.connect(
+      NODE_ENV === "production" ? (DATABASE_HOSTED as string) : (DATABASE_LOCAL as string)
+    );
     console.log("************DATABASE CONNECTED************");
   } catch (error) {
     throw new Error(`Cannot connect to database ${error}`);
