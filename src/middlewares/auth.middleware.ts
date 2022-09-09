@@ -136,7 +136,11 @@ export const semdEmailVerificationLink = async (
     // )}/api/v1/auth/confirm-email/${emailToken}`;
 
     // eslint-disable-next-line max-len
-    const html = `<h3>Welcome to Audiophile. Your one stop online store for all your audio needs. <br/> ${emailToken} is your Email Verification Code</h3><h4>Verification code is Valid for 10 minutes</h4>`;
+    const html = `
+           <h3>Welcome to Audiophile. Your one stop online store for all your Audio needs</h3>
+           <h1> ${emailToken} </h1> <span> is your Email Verification Code</span>
+           <h4>Verification code is Valid for 10 minutes</h4>
+    `;
     await new Email(user).send(html, "Welcome to Audiophile");
 
     return res
