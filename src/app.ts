@@ -20,7 +20,9 @@ import { globalErrorHandler } from "./controllers/handleAppError.controller";
 const app: Application = express();
 
 // USE CORS
-app.use(cors({ credentials: true }));
+app.use(
+  cors()
+);
 app.options("*", cors);
 
 // Set security HTTP headers
