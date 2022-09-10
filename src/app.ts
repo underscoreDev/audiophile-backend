@@ -21,7 +21,10 @@ const app: Application = express();
 
 // USE CORS
 app.use(
-  cors()
+  cors({
+    origin: true,
+    credentials: true,
+  })
 );
 app.options("*", cors);
 
