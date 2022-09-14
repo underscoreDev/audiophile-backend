@@ -22,7 +22,7 @@ const app: Application = express();
 // USE CORS
 app.use(
   cors({
-    origin: true,
+    origin: ["https://audiophile-frontend-seven.vercel.app", "http://localhost:3000"],
     credentials: true,
   })
 );

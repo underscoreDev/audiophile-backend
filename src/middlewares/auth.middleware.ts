@@ -62,10 +62,11 @@ export const frontendVerifyCookie = async (req: Request, res: Response, next: Ne
 
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization?.split(" ")[1];
+    console.log(`from bearer:${token}`);
   } else if (req.cookies?.jwt) {
     token = req.cookies.jwt;
+    console.log(`from cookie:${token}`);
   }
-  console.log(token);
 
   if (!token) {
     return next(new AppError("You are not logged in Please provide a token", 403));
