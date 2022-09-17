@@ -29,7 +29,7 @@ authRouter.route("/resend-email-confirmation-code").post(catchAsync(resendEmailC
 authRouter.route("/login").post(catchAsync(login));
 
 // LOGOUT USER
-authRouter.route("/logout").get(catchAsync(logout));
+authRouter.route("/logout").post(catchAsync(logout));
 
 // FORGOT PASSWORD
 authRouter.route("/forgot-password").patch(catchAsync(forgotPassword));
