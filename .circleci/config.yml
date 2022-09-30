@@ -15,7 +15,7 @@ jobs:
       - run:
           name: Install node Packages
           command: |
-            npm run backend:install
+            npm install
       # - run:
       #     name: Lint code
       #     command: |
@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Build Code
           command: |
-            npm run backend:build
+            tsc
       - run:
           name: Test Code
           command: |
