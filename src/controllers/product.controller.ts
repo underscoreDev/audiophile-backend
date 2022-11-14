@@ -8,6 +8,7 @@ import {
   getOneHandler,
 } from "../middlewares/handlerFactory.controller";
 
+// GET ALL PRODUCTS (FILTERS CAN BE APPLIED)
 export const getAllProducts = async (req: Request, res: Response) => {
   const parser = new MongooseQueryParser();
   const parsed = parser.parse(req.query);
@@ -25,6 +26,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
   return res.status(200).json({ status: "success", results: products.length, data: { products } });
 };
 
+// GET PRODUCTS STATS
 export const getProductStats = async (_req: Request, res: Response) => {
   const stats = await Product.aggregate([
     { $match: { price: { $gte: 500 } } },
@@ -42,6 +44,7 @@ export const getProductStats = async (_req: Request, res: Response) => {
   return res.status(200).json({ status: "success", data: { stats } });
 };
 
+// GET PRODUCTS PER CATEGORY
 export const getProductInACategory = async (req: Request, res: Response) => {
   const { category } = req.params;
   const products = await Product.find({ category }).select(

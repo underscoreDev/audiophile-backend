@@ -5,6 +5,7 @@ import { ProductProps, productsCategories } from "../interface/products.interfac
 
 export type ProductsModel = Model<ProductProps, {}, {}>;
 
+// PRODUCT SCHEMA
 const productSchema = new Schema<ProductProps, ProductsModel, {}>(
   {
     slug: String,

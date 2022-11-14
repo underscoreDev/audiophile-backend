@@ -14,6 +14,7 @@ import { uploadToS3 } from "../utils/awsS3Client.utils";
 //   },
 // });
 
+// multer user photo upload function
 const multerFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);
@@ -26,6 +27,7 @@ const upload = multer({ storage: multer.memoryStorage(), fileFilter: multerFilte
 
 export const uploadUserPhoto = upload.single("photo");
 
+// resize user photo
 export const resizeUserPhoto = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.file) {
     return next();

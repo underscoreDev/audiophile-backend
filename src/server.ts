@@ -11,23 +11,23 @@ process.on("uncaughtException", (err) => {
 
 const port = process.env.PORT || 9898;
 
+//  CONNECT TO THE DATABASE
 const dbConnect = async () => {
   try {
     await mongoose.connect(DATABASE_HOSTED as string);
-    // await mongoose.connect(
-    //   NODE_ENV === "production" ? (DATABASE_HOSTED as string) : (DATABASE_LOCAL as string)
-    // );
     console.log("************DATABASE CONNECTED************");
   } catch (error) {
     throw new Error(`Cannot connect to database ${error}`);
   }
 };
 
+// START APP
 const server = app.listen(port, async () => {
   await dbConnect();
   console.log(`Server started on http://${HOST}:${port}`);
 });
 
+// HANDLE ERRORS
 process.on("unhandledRejection", (err: any) => {
   console.log(err.name, err.message);
   console.log("****** UMHANDLED REJECTION 🔥🔥🔥 SHUTTING DOWN *****");

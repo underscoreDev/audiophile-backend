@@ -5,6 +5,7 @@ import { AppError } from "./handleAppError.middleware";
 import { uploadToS3 } from "../utils/awsS3Client.utils";
 import { Response, NextFunction, Request } from "express";
 
+// MIDDLEWARE TO PASS FILTERS FOR GETTING THE TOP 5 PRODUCTS
 export const aliasTopProducts = (req: Request, _res: Response, next: NextFunction) => {
   req.query.limit = "5";
   req.query.sort = "-ratingsAverage,price";
@@ -12,6 +13,7 @@ export const aliasTopProducts = (req: Request, _res: Response, next: NextFunctio
   next();
 };
 
+// multer- product image UPLOAD FUNCTION
 const multerFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   if (file.mimetype.startsWith("image")) {
     cb(null, true);
@@ -27,6 +29,7 @@ export const uploadTourPhotos = upload.fields([
   { name: "productImageGallery", maxCount: 5 },
 ]);
 
+// IMAGE RESIZE AND UPLOAD MIDDLEWARE
 export const resizeAndUploadTourPhotos = async (
   req: Request,
   _res: Response,

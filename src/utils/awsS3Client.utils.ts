@@ -22,6 +22,7 @@ export interface UploadProps {
   ContentType: any;
 }
 
+// AWS FILE UPLOAD FUNCTION
 export const uploadToS3 = async ({ Body, ContentType, Key }: UploadProps) => {
   const params = { Bucket: bucketName as string, Key, Body, ContentType };
   const { Location } = await s3.upload(params).promise();

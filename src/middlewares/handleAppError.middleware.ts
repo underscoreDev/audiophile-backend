@@ -1,4 +1,6 @@
 /* eslint-disable require-jsdoc */
+
+// CLASS TO HANDLE APP ERRORS
 export const AppError = class extends Error {
   public readonly status: string;
   public readonly statusCode: number;

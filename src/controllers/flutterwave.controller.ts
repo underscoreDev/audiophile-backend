@@ -7,6 +7,7 @@ import { Email } from "../utils/email.util";
 import { OrderStatus } from "../interface/orders.interface";
 import { AppError } from "../middlewares/handleAppError.middleware";
 
+// GET FLUTTERWAVE CHECKOUT SESSION
 export const getCheckoutsession = async (req: Request, res: Response, next: NextFunction) => {
   const { orderItems, shippingInfo } = req.body;
   const user = req.user;
@@ -46,6 +47,7 @@ export const getCheckoutsession = async (req: Request, res: Response, next: Next
   return res.status(200).json(data);
 };
 
+// FLUTTERWAVE CHECKOUT WEBHOOK
 export const flwWebhook = async (req: Request, res: Response) => {
   // If you specified a secret hash, check for the signature
   const secretHash = process.env.FLW_SECRET_HASH;

@@ -14,6 +14,7 @@ const {
   SENDINBLUE_Login,
 } = process.env;
 
+// EMAIL CLASS
 export const Email = class {
   private to: string;
   private firstname: string;

@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { roles } from "../interface/user.interface";
+import { protect, restrictTo } from "../middlewares/auth.middleware";
 import { catchAsync } from "../middlewares/catchAsyncError.middleware";
 import {
   getAllReviews,
@@ -6,8 +8,6 @@ import {
   deleteReview,
   getOneReview,
 } from "../controllers/review.controller";
-import { protect, restrictTo } from "../middlewares/auth.middleware";
-import { roles } from "../interface/user.interface";
 
 const reviewsRouter = Router({ mergeParams: true });
 
@@ -23,6 +23,5 @@ reviewsRouter
   .route("/:id")
   .delete(restrictTo([roles.admin]), catchAsync(deleteReview))
   .get(restrictTo([roles.manager, roles.admin]), catchAsync(getOneReview));
-// .patch(restrictTo([roles.admin]), catchAsync(updateReview))
 
 export default reviewsRouter;

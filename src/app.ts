@@ -17,6 +17,7 @@ import express, { Request, Response, Application } from "express";
 import { AppError } from "./middlewares/handleAppError.middleware";
 import { globalErrorHandler } from "./controllers/handleAppError.controller";
 
+// initialize app
 const app: Application = express();
 
 // USE CORS

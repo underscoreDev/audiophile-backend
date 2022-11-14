@@ -4,15 +4,17 @@ import "dotenv/config";
 import { Types } from "mongoose";
 import { roles } from "../interface/user.interface";
 import User from "../models/user.model";
+import { Email } from "../utils/email.util";
 import { AppError } from "./handleAppError.middleware";
 import { Request, Response, NextFunction } from "express";
-import { Email } from "../utils/email.util";
 
 const { JWT_SECRET, JWT_EXPIRES_IN, NODE_ENV } = process.env;
 
+// FUNCTION TO SIGN THE JWT 
 export const signJwt = (id: Types.ObjectId) =>
   jwt.sign({ id }, JWT_SECRET as string, { expiresIn: JWT_EXPIRES_IN });
 
+  // FUNCTION TO PROTECT ROUTES
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   let token;
 
@@ -57,6 +59,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
   next();
 };
 
+// FUNCTION TO VERIFY USER TOKEN ON THE FRONTEND
 export const frontendVerifyCookie = async (req: Request, res: Response, next: NextFunction) => {
   let token;
 
@@ -102,6 +105,7 @@ export const frontendVerifyCookie = async (req: Request, res: Response, next: Ne
   return res.status(200).json({ status: "Success", token, data: sendUser });
 };
 
+// FUNCTION FOR RESTRICTION / AUTHORIZATION
 export const restrictTo =
   ([...userRoles]: roles[]) =>
   (req: Request, res: Response, next: NextFunction) => {
@@ -111,6 +115,7 @@ export const restrictTo =
     next();
   };
 
+  // STANDARD RESPONSE FUNCTION
 export const createSendToken = (user: any, statusCode: number, res: Response) => {
   const token = signJwt(user.id);
 
@@ -125,6 +130,7 @@ export const createSendToken = (user: any, statusCode: number, res: Response) =>
   return res.status(statusCode).json({ status: "Success", token, data: { user } });
 };
 
+// FUNCTION TO SEND EMAIL VERIFICATION LINK
 export const semdEmailVerificationLink = async (
   req: Request,
   res: Response,
@@ -155,6 +161,7 @@ export const semdEmailVerificationLink = async (
   }
 };
 
+// FUNCTION TO SEND FORGOT PASSWORD EMAIL TOKEN
 export const sendForgotPasswordToken = async (
   req: Request,
   res: Response,

@@ -7,6 +7,7 @@ import {
   OrderStatus,
 } from "../interface/orders.interface";
 
+// ORDER SCHEMA
 const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>(
   {
     orderItems: [
@@ -56,6 +57,7 @@ const ordersSchema = new Schema<OrderProps, OrderModel, OrderInstanceMethods>(
   { versionKey: false }
 );
 
+//  MONGOOSE MIDDLEWARES
 ordersSchema.pre("save", async function () {
   const greg = await this.populate({
     path: "orderItems.product",

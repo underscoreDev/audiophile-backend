@@ -6,6 +6,7 @@ import Product from "../models/product.model";
 import User from "../models/user.model";
 import Order from "../models/orders.model";
 
+// CUSTOM DELETE HANDLER FUNCTION
 export const deleteHandler =
   (Model: typeof Reviews | typeof Product | typeof User | typeof Order) =>
   async (req: Request, res: Response, next: NextFunction) => {
@@ -16,12 +17,14 @@ export const deleteHandler =
     return res.status(204).json({ status: "Deleted Successfully", data: null });
   };
 
+// CUSTOM CREATE HANDLER FUNCTION
 export const createHandler =
   (Model: typeof Reviews | typeof Product | typeof User) => async (req: Request, res: Response) => {
     const newP = await Model.create(req.body);
     return res.status(201).json({ status: "Created Successfully", data: { data: newP } });
   };
 
+// CUSTOM UPDATE HANDLER FUNCTION
 export const updateHandler =
   (Model: any) => async (req: Request, res: Response, next: NextFunction) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
@@ -35,6 +38,7 @@ export const updateHandler =
     return res.status(201).json({ status: "Updated Successfully", data: { data: doc } });
   };
 
+// CUSTOM GET HANDLER FUNCTION
 export const getOneHandler =
   (Model: any, populateOptions?: { path: string; select?: string }) =>
   async (req: Request, res: Response, next: NextFunction) => {

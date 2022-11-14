@@ -11,6 +11,7 @@ import {
 } from "../middlewares/auth.middleware";
 import { AppError } from "../middlewares/handleAppError.middleware";
 
+// signup user
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
   const { firstname, lastname, email, password, passwordConfirm, phoneNumber }: UserProps =
     req.body;
@@ -28,6 +29,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
   await semdEmailVerificationLink(req, res, next, { user, emailToken });
 };
 
+// SEND USER A CONFIRMATION EMAIL CODE
 export const confirmEmail = async (req: Request, res: Response, next: NextFunction) => {
   const confirmationCode = req.params.verify_token;
   const hashedToken = crypto.createHash("sha256").update(confirmationCode).digest("hex");
@@ -62,6 +64,7 @@ export const confirmEmail = async (req: Request, res: Response, next: NextFuncti
   createSendToken(sendUser, 200, res);
 };
 
+// RESEND CONFIRMATION EMAIL CODE
 export const resendEmailConfirmationToken = async (
   req: Request,
   res: Response,
@@ -82,6 +85,7 @@ export const resendEmailConfirmationToken = async (
   await semdEmailVerificationLink(req, res, next, { user, emailToken });
 };
 
+// LOGIN USER
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
   // check if email and password is entered and if email is valid
@@ -113,6 +117,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
   createSendToken(sendUser, 200, res);
 };
 
+// SEND FORGOT PASSWORD CODE
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -125,6 +130,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
   await sendForgotPasswordToken(req, res, next, { resetToken, user });
 };
 
+// RESEND FORGOT PASSWORD CODE
 export const resendForgotPasswordToken = async (
   req: Request,
   res: Response,
@@ -141,6 +147,7 @@ export const resendForgotPasswordToken = async (
   await sendForgotPasswordToken(req, res, next, { resetToken, user });
 };
 
+// RESET PASSWORD
 export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
   const { resetToken, password, passwordConfirm } = req.body;
 
@@ -174,6 +181,7 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   createSendToken(sendUser, 200, res);
 };
 
+// UPDATE PASSWORD AFTER RESETTING IS SUCCESSFUL
 export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
   // get user from collection
   const { oldPassword, newPassword, newPasswordConfirm } = req.body;
@@ -205,6 +213,7 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
   createSendToken(sendUser, 200, res);
 };
 
+// LOGOUT PASSWORD
 export const logout = async (req: Request, res: Response) => {
   res.cookie("jwt", "", { httpOnly: true, expires: new Date(Date.now() + 10 * 1000) });
   return res.status(200).json({ status: "Logged Out Successfully" });
