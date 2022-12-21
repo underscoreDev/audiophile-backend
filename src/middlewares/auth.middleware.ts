@@ -10,11 +10,11 @@ import { Request, Response, NextFunction } from "express";
 
 const { JWT_SECRET, JWT_EXPIRES_IN, NODE_ENV } = process.env;
 
-// FUNCTION TO SIGN THE JWT 
+// FUNCTION TO SIGN THE JWT
 export const signJwt = (id: Types.ObjectId) =>
   jwt.sign({ id }, JWT_SECRET as string, { expiresIn: JWT_EXPIRES_IN });
 
-  // FUNCTION TO PROTECT ROUTES
+// FUNCTION TO PROTECT ROUTES
 export const protect = async (req: Request, res: Response, next: NextFunction) => {
   let token;
 
@@ -65,7 +65,7 @@ export const frontendVerifyCookie = async (req: Request, res: Response, next: Ne
 
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization?.split(" ")[1];
-    console.log(`from bearer:${token}`);
+    // console.log(`from bearer:${token}`);
   } else if (req.cookies?.jwt) {
     token = req.cookies.jwt;
     console.log(`from cookie:${token}`);
@@ -115,7 +115,7 @@ export const restrictTo =
     next();
   };
 
-  // STANDARD RESPONSE FUNCTION
+// STANDARD RESPONSE FUNCTION
 export const createSendToken = (user: any, statusCode: number, res: Response) => {
   const token = signJwt(user.id);
 
